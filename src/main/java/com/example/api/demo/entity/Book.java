@@ -5,32 +5,33 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Past;
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.Size;
 
 // lombok.Data generate getters and setters.
 @lombok.Data
+// Jakarta
 @Entity
 @Table
 public class Book {
+    // Jakarta
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // Jakarta
     @NotBlank(message = "Title required")
     private String title;
 
+    // Jakarta
     @NotBlank(message = "Description required")
     private String description;
 
+    // Jakarta
     @NotBlank(message = "ISBN required")
     private String isbn;
 
+    // Jakarta
     @Positive
     private int year;
 
@@ -53,6 +54,7 @@ public class Book {
         this.year = year;
     }
 
+    // Java
     @Override
     public String toString() {
         return "Book{" +
