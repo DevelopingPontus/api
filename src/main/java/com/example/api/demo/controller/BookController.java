@@ -2,6 +2,8 @@ package com.example.api.demo.controller;
 
 import java.util.List;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -11,11 +13,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.api.demo.dto.BookRequest;
 import com.example.api.demo.dto.BookResponse;
+import com.example.api.demo.exception.BookNotFoundException;
+import com.example.api.demo.exception.BooksNotFoundException;
+import com.example.api.demo.exception.ErrorSavingException;
 import com.example.api.demo.service.BookService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-
 
 // Spring
 @RestController
@@ -33,32 +37,26 @@ public class BookController {
     @GetMapping
     // OpenApi
     @Operation(summary = "Get all books", description = "Returns all books")
-    public List<BookResponse> getAll() {
-        create(new BookRequest(
-               null,
-                       "The Great Gatsby",
-                               " A novel by F. Scott Fitzgerald",
-                                       "1925",
-                                               1212
-        ));
-        return service.getAll();
+    public ResponseEntity<List<BookResponse>> getAll() throws BooksNotFoundException {
+        return new ResponseEntity<>(service.getAll(), HttpStatus.OK);
     }
 
     // Spring
     @GetMapping("/{id}")
     // OpenApi
     @Operation(summary = "Get a book by ID", description = "Returns a single book based on the provided ID")
-    public BookResponse getOne(@PathVariable Long id) throws Exception {
-            return service.get(id);
+    public ResponseEntity<BookResponse> getOne(@PathVariable Long id) throws BookNotFoundException {
+        return new ResponseEntity<>(service.get(id), HttpStatus.OK);
     }
 
     // Spring
     @PostMapping
     // OpenApi
     @Operation(summary = "Create a new book", description = "Creates a new book based on the provided details")
-    public BookRequest create(@RequestBody BookRequest request) {
-            service.create(request);
-            return request;
+    public ResponseEntity<BookRequest> create(@RequestBody BookRequest request) throws ErrorSavingException {
+        service.create(request);
+        return new ResponseEntity<>(request, HttpStatus.CREATED);
     }
+
 
 }

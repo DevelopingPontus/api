@@ -1,9 +1,9 @@
 package com.example.api.demo.exception;
 
-public class NotFoundException extends Exception {
+public class BookNotFoundException extends RuntimeException {
     private final Long id;
 
-    public NotFoundException(String message, Long id) {
+    public BookNotFoundException(String message, Long id) {
         super(message);
         this.id = id;
     }
@@ -12,4 +12,3 @@ public class NotFoundException extends Exception {
         return id;
     }
 }
-

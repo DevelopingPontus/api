@@ -13,8 +13,6 @@ import com.example.api.demo.service.StepService;
 
 // RestController tells Spring Boot to treat the controller as a RESTful API.
 // RequestMapping tells Spring Boot to map the controller to a specific URL.
-@RestController
-@RequestMapping("api/v1/steps")
 public class StepController {
     private final StepService stepService;
 
