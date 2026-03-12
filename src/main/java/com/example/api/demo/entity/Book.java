@@ -1,5 +1,7 @@
 package com.example.api.demo.entity;
 
+import com.example.api.demo.dto.BookResponse;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
