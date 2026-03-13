@@ -1,14 +1,11 @@
-package com.example.api.demo.entity;
+package com.example.api.demo.v1.entity;
 
-import com.example.api.demo.dto.BookResponse;
-
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 
 // lombok.Data generate getters and setters.
@@ -16,42 +13,51 @@ import jakarta.validation.constraints.NotBlank;
 // Jakarta
 @Entity
 @Table
-public class Book {
+public class BookV2 {
     // Jakarta
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @jakarta.validation.constraints.Null
+    // OpenApi
+    @Schema(description = "ID of the book (should be null when creating a new book)", example = "null")
     private Long id;
 
     // Jakarta
     @NotBlank(message = "Title required")
+    // OpenApi
+    @Schema(description = "Title")
     private String title;
 
     // Jakarta
     @NotBlank(message = "Description required")
+    // OpenApi
+    @Schema(description = "Description")
     private String description;
 
     // Jakarta
     @NotBlank(message = "ISBN required")
+    // OpenApi
+    @Schema(description = "ISBN")
     private String isbn;
 
     // Jakarta
-    @Min(100)
-    // Getting current year would be better
-    @Max(2026)
+    @NotBlank(message = "Year of publication required")
+    // OpenApi
+    @Schema(description = "Year of publication (should be in the past)")
     private int year;
 
-    public Book() {
+    public BookV2() {
 
     }
 
-    public Book(String title, String description, String isbn, int year) {
+    public BookV2(String title, String description, String isbn, int year) {
         this.title = title;
         this.description = description;
         this.isbn = isbn;
         this.year = year;
     }
 
-    public Book(Long id, String title, String description, String isbn, int year) {
+    public BookV2(Long id, String title, String description, String isbn, int year) {
         this.id = id;
         this.title = title;
         this.description = description;

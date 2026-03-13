@@ -1,6 +1,6 @@
-package com.example.api.demo.dto;
+package com.example.api.demo.v1.dto;
 
-public record StepResponse(
+public record BookRequestV1(
         Long id,
         String title,
         String description,

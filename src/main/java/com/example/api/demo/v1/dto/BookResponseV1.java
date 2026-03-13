@@ -1,6 +1,6 @@
-package com.example.api.demo.dto;
+package com.example.api.demo.v1.dto;
 
-public record BookResponse(
+public record BookResponseV1(
         Long id,
         String title,
         String description,
