@@ -1,34 +1,47 @@
 package com.example.api.demo.v2.service;
 
-
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.springframework.stereotype.Service;
 
-import com.example.api.demo.v2.entity.BookV2;
-import com.example.api.demo.v2.repository.BookRepositoryV2;
+import com.example.api.demo.repository.BookStatusRepository;
+import com.example.api.demo.repository.BookRepository;
+import com.example.api.demo.entity.Book;
+import com.example.api.demo.entity.BookStatus;
 import com.example.api.demo.exception.BookNotFoundException;
 
 // Spring
 @Service
 public class BookServiceV2 {
-    private final BookRepositoryV2 repository;
+    private final BookRepository bookRepository;
+    private final BookStatusRepository statusRepository;
 
-    public BookServiceV2(BookRepositoryV2 repository) {
-        this.repository = repository;
+    public BookServiceV2(BookRepository repository, BookStatusRepository statusRepository) {
+        this.bookRepository = repository;
+        this.statusRepository = statusRepository;
     }
 
-    public List<BookV2> findAll() {
-        return repository.findAll();
+    public List<BookStatus> findAll() {
+        return statusRepository.findAll();
     }
 
-    public BookV2 findById(Long id) throws BookNotFoundException {
-        return repository.findById(id)
+    public Set<Object> findById(Long id) throws BookNotFoundException {
+        Book book = bookRepository.findById(id)
                 .orElseThrow(() -> new BookNotFoundException("Book not found with ID ", id));
-    }
-    
-    public BookV2 save(BookV2 req) {
-        return repository.save(req);
+        BookStatus status = statusRepository.findById(id)
+                .orElse(createStatus(id));
+        return Set.of(book, status);
     }
 
+    public Set<Object> save(Book req) {
+        Book book = bookRepository.save(req);
+        BookStatus status = createStatus(book.getId());
+        return Set.of(book, status);
+    }
+
+    public BookStatus createStatus(Long id) {
+        return statusRepository.save(new BookStatus(id, true));
+    }
 }

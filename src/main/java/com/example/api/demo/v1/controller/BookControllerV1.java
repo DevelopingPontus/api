@@ -12,9 +12,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.api.demo.entity.Book;
 import com.example.api.demo.v1.dto.BookRequestV1;
 import com.example.api.demo.v1.dto.BookResponseV1;
-import com.example.api.demo.v1.entity.BookV2;
 import com.example.api.demo.v1.service.BookServiceV1;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -71,14 +71,13 @@ public class BookControllerV1 {
             @ApiResponse(responseCode = "400", description = "Invalid input provided"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-    public ResponseEntity<BookResponseV1> create(@RequestBody @Valid BookV2 req) throws URISyntaxException {
-        BookV2 book = service.save(req);
-        BookResponseV1 res = toDto(book);
-        return ResponseEntity.created(new URI("/api/books/" + res.id())).body(res);
+    public ResponseEntity<BookResponseV1> create(@RequestBody @Valid Book req) throws URISyntaxException {
+        BookResponseV1 res = toDto(service.save(req));
+        return ResponseEntity.created(new URI("/api/v1/books/" + res.id())).body(res);
     }
 
     // Mappers
-    public BookResponseV1 toDto(BookV2 entity) {
+    public BookResponseV1 toDto(Book entity) {
         return new BookResponseV1(
                 entity.getId(),
                 entity.getTitle(),
@@ -87,8 +86,8 @@ public class BookControllerV1 {
                 entity.getYear());
     }
 
-    public BookV2 toEntity(BookRequestV1 request) {
-        return new BookV2(
+    public Book toEntity(BookRequestV1 request) {
+        return new Book(
                 request.id(),
                 request.title(),
                 request.description(),

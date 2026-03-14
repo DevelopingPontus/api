@@ -1,4 +1,4 @@
-package com.example.api.demo.v1.entity;
+package com.example.api.demo.entity;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Entity;
@@ -13,7 +13,7 @@ import jakarta.validation.constraints.NotBlank;
 // Jakarta
 @Entity
 @Table
-public class BookV2 {
+public class Book {
     // Jakarta
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -46,18 +46,18 @@ public class BookV2 {
     @Schema(description = "Year of publication (should be in the past)")
     private int year;
 
-    public BookV2() {
+    public Book() {
 
     }
 
-    public BookV2(String title, String description, String isbn, int year) {
+    public Book(String title, String description, String isbn, int year) {
         this.title = title;
         this.description = description;
         this.isbn = isbn;
         this.year = year;
     }
 
-    public BookV2(Long id, String title, String description, String isbn, int year) {
+    public Book(Long id, String title, String description, String isbn, int year) {
         this.id = id;
         this.title = title;
         this.description = description;

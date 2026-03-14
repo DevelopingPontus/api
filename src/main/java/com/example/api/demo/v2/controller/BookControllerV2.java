@@ -3,6 +3,10 @@ package com.example.api.demo.v2.controller;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.management.RuntimeErrorException;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,9 +16,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.api.demo.entity.Book;
+import com.example.api.demo.entity.BookStatus;
+import com.example.api.demo.exception.BookNotFoundException;
 import com.example.api.demo.v2.dto.BookRequestV2;
 import com.example.api.demo.v2.dto.BookResponseV2;
-import com.example.api.demo.v2.entity.BookV2;
 import com.example.api.demo.v2.service.BookServiceV2;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -43,9 +49,8 @@ public class BookControllerV2 {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved all books"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-    public ResponseEntity<List<BookResponseV2>> getAll() {
-        List<BookResponseV2> res = service.findAll().stream().map(this::toDto).toList();
-        return ResponseEntity.ok(res);
+    public ResponseEntity<List<BookStatus>> getAll() {
+        return ResponseEntity.ok(service.findAll());
     }
 
     // Spring
@@ -58,7 +63,8 @@ public class BookControllerV2 {
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     public ResponseEntity<BookResponseV2> findById(@PathVariable @Valid Long id) {
-        BookResponseV2 res = toDto(service.findById(id));
+        Set<Object> entity = service.findById(id);
+        BookResponseV2 res = toDto(entity);
         return ResponseEntity.ok(res);
     }
 
@@ -71,31 +77,38 @@ public class BookControllerV2 {
             @ApiResponse(responseCode = "400", description = "Invalid input provided"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-    public ResponseEntity<BookResponseV2> create(@RequestBody @Valid BookV2 req) throws URISyntaxException {
-        BookV2 book = service.save(req);
-        BookResponseV2 res = toDto(book);
-        return ResponseEntity.created(new URI("/api/books/" + res.id())).body(res);
+    public ResponseEntity<BookResponseV2> create(@RequestBody @Valid Book req) throws URISyntaxException {
+        // Set of (Book, BookStatus)
+        Set<Object> entity = service.save(req);
+        BookResponseV2 res = toDto(entity);
+        return ResponseEntity.created(new URI("/api/v2/books/" + res.id())).body(res);
     }
 
     // Mappers
-    public BookResponseV2 toDto(BookV2 entity) {
+    public BookResponseV2 toDto(Set<Object> entity) {
+        Book book = null;
+        BookStatus bookStatus = null;
+
+        for (Object obj : entity) {
+            book = (Book) obj;
+            bookStatus = (BookStatus) obj;
+        }
+
         return new BookResponseV2(
-                entity.getId(),
-                entity.getTitle(),
-                entity.getDescription(),
-                entity.getIsbn(),
-                entity.getYear(),
-                entity.isAvailable(),
-                "V2");
+                book.getId(),
+                book.getTitle(),
+                book.getDescription(),
+                book.getIsbn(),
+                book.getYear(),
+                bookStatus.isAvailable());
     }
 
-    public BookV2 toEntity(BookRequestV2 request) {
-        return new BookV2(
+    public Book toEntity(BookRequestV2 request) {
+        return new Book(
                 request.id(),
                 request.title(),
                 request.description(),
                 request.isbn(),
-                request.year(),
-                request.available());
+                request.year());
     }
 }
