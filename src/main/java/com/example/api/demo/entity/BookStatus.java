@@ -1,7 +1,10 @@
 package com.example.api.demo.entity;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.annotation.Generated;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
@@ -12,6 +15,7 @@ import jakarta.persistence.Table;
 @Table
 public class BookStatus {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Schema(description = "Book availability status", example = "null")
@@ -21,8 +25,7 @@ public class BookStatus {
     @JoinColumn(name = "book_id", referencedColumnName = "id")
     private Book book;
 
-    public BookStatus(Long id) {
-        this.id = id;
+    public BookStatus() {
         this.available = true;
     }
 

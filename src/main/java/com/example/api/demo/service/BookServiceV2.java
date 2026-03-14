@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import com.example.api.demo.repository.BookStatusRepository;
 import com.example.api.demo.repository.BookRepository;
 import com.example.api.demo.entity.Book;
+import com.example.api.demo.entity.BookStatus;
 
 // Spring
 @Service
@@ -26,8 +27,10 @@ public class BookServiceV2 {
     // }
 
 
-    public Book save(Book req) {
-        return bookRepository.save(req);
-        // return statusRepository.save(new BookStatus(book.getId()));
+    public BookStatus save(Book req) {
+        Book book = bookRepository.save(req);
+        BookStatus bookStatus = statusRepository.save(new BookStatus());
+        bookStatus.setBook(book);
+        return bookStatus;
     }
 }

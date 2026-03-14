@@ -40,10 +40,6 @@ public class Book {
     @Schema(description = "ISBN")
     private String isbn;
 
-    // Jakarta
-    @NotBlank(message = "Year of publication required")
-    // OpenApi
-    @Schema(description = "Year of publication (should be in the past)")
     private int year;
 
     public Book() {

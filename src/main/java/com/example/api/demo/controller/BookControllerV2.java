@@ -94,7 +94,7 @@ public class BookControllerV2 {
             @ApiResponse(responseCode = "400", description = "Invalid input provided"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-    public ResponseEntity<Book> createTest(@RequestBody @Valid Book req) {
+    public ResponseEntity<BookStatus> createTest(@RequestBody @Valid Book req) {
         return new ResponseEntity<>(service.save(req), HttpStatus.CREATED);
     }
 
