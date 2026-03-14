@@ -1,12 +1,8 @@
-package com.example.api.demo.v2.controller;
+package com.example.api.demo.controller;
 
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.management.RuntimeErrorException;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,12 +12,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.example.api.demo.dto.BookRequestV1;
+import com.example.api.demo.dto.BookResponseV1;
 import com.example.api.demo.entity.Book;
-import com.example.api.demo.entity.BookStatus;
-import com.example.api.demo.exception.BookNotFoundException;
-import com.example.api.demo.v2.dto.BookRequestV2;
-import com.example.api.demo.v2.dto.BookResponseV2;
-import com.example.api.demo.v2.service.BookServiceV2;
+import com.example.api.demo.service.BookServiceV1;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -31,13 +25,13 @@ import jakarta.validation.Valid;
 
 // Spring
 @RestController
-@RequestMapping("api/v2/books")
+@RequestMapping("api/v1/books")
 // OpenApi
 @Tag(name = "Books", description = "Operations related to books")
-public class BookControllerV2 {
-    private final BookServiceV2 service;
+public class BookControllerV1 {
+    private final BookServiceV1 service;
 
-    public BookControllerV2(BookServiceV2 service) {
+    public BookControllerV1(BookServiceV1 service) {
         this.service = service;
     }
 
@@ -49,8 +43,9 @@ public class BookControllerV2 {
             @ApiResponse(responseCode = "200", description = "Successfully retrieved all books"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-    public ResponseEntity<List<BookStatus>> getAll() {
-        return ResponseEntity.ok(service.findAll());
+    public ResponseEntity<List<BookResponseV1>> getAll() {
+        List<BookResponseV1> res = service.findAll().stream().map(this::toDto).toList();
+        return ResponseEntity.ok(res);
     }
 
     // Spring
@@ -62,9 +57,8 @@ public class BookControllerV2 {
             @ApiResponse(responseCode = "404", description = "Book not found with the given ID"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-    public ResponseEntity<BookResponseV2> findById(@PathVariable @Valid Long id) {
-        Set<Object> entity = service.findById(id);
-        BookResponseV2 res = toDto(entity);
+    public ResponseEntity<BookResponseV1> findById(@PathVariable @Valid Long id) {
+        BookResponseV1 res = toDto(service.findById(id));
         return ResponseEntity.ok(res);
     }
 
@@ -77,33 +71,22 @@ public class BookControllerV2 {
             @ApiResponse(responseCode = "400", description = "Invalid input provided"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-    public ResponseEntity<BookResponseV2> create(@RequestBody @Valid Book req) throws URISyntaxException {
-        // Set of (Book, BookStatus)
-        Set<Object> entity = service.save(req);
-        BookResponseV2 res = toDto(entity);
-        return ResponseEntity.created(new URI("/api/v2/books/" + res.id())).body(res);
+    public ResponseEntity<BookResponseV1> create(@RequestBody @Valid Book req) throws URISyntaxException {
+        BookResponseV1 res = toDto(service.save(req));
+        return ResponseEntity.created(new URI("/api/v1/books/" + res.id())).body(res);
     }
 
     // Mappers
-    public BookResponseV2 toDto(Set<Object> entity) {
-        Book book = null;
-        BookStatus bookStatus = null;
-
-        for (Object obj : entity) {
-            book = (Book) obj;
-            bookStatus = (BookStatus) obj;
-        }
-
-        return new BookResponseV2(
-                book.getId(),
-                book.getTitle(),
-                book.getDescription(),
-                book.getIsbn(),
-                book.getYear(),
-                bookStatus.isAvailable());
+    public BookResponseV1 toDto(Book entity) {
+        return new BookResponseV1(
+                entity.getId(),
+                entity.getTitle(),
+                entity.getDescription(),
+                entity.getIsbn(),
+                entity.getYear());
     }
 
-    public Book toEntity(BookRequestV2 request) {
+    public Book toEntity(BookRequestV1 request) {
         return new Book(
                 request.id(),
                 request.title(),
@@ -111,4 +94,5 @@ public class BookControllerV2 {
                 request.isbn(),
                 request.year());
     }
+
 }

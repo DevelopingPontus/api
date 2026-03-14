@@ -1,4 +1,4 @@
-package com.example.api.demo.v1.dto;
+package com.example.api.demo.dto;
 
 public record BookRequestV1(
         Long id,
