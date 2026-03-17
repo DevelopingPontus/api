@@ -1,4 +1,4 @@
-package com.example.api.demo.controller;
+package com.example.api.demo.controller.v1;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.example.api.demo.dto.BookRequest;
-import com.example.api.demo.dto.BookResponse;
+import com.example.api.demo.dto.v1.BookRequest;
+import com.example.api.demo.dto.v1.BookResponse;
 import com.example.api.demo.entity.Book;
 import com.example.api.demo.service.BookService;
 
@@ -71,8 +71,9 @@ public class BookController {
             @ApiResponse(responseCode = "400", description = "Invalid input provided"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-    public ResponseEntity<BookResponse> create(@RequestBody @Valid Book req) throws URISyntaxException {
-        Book book = service.save(req);
+    public ResponseEntity<BookResponse> create(@RequestBody @Valid BookRequest req) throws URISyntaxException {
+        Book book = service.save(toEntity(req));
+
         BookResponse res = toDto(book);
         return ResponseEntity.created(new URI("/api/books/" + res.id())).body(res);
     }

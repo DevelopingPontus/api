@@ -8,8 +8,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 
-// lombok.Data generate getters and setters.
-@lombok.Data
 // Jakarta
 @Entity
 @Table
@@ -40,7 +38,11 @@ public class Book {
     @Schema(description = "ISBN")
     private String isbn;
 
+    @Schema(description = "Publication year")
     private int year;
+
+    @Schema(description = "Available")
+    private boolean available;
 
     public Book() {
 
@@ -61,6 +63,17 @@ public class Book {
         this.year = year;
     }
 
+    public Book(Long id, String title, String description, String isbn, int year, boolean available) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.isbn = isbn;
+        this.year = year;
+        this.available = available;
+    }
+
+    
+
     // Java
     @Override
     public String toString() {
@@ -69,6 +82,54 @@ public class Book {
                 ", name='" + title + '/' +
                 ", description='" + description + '/' +
                 "}";
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getIsbn() {
+        return isbn;
+    }
+
+    public void setIsbn(String isbn) {
+        this.isbn = isbn;
+    }
+
+    public int getYear() {
+        return year;
+    }
+
+    public void setYear(int year) {
+        this.year = year;
+    }
+
+    public boolean isAvailable() {
+        return available;
+    }
+
+    public void setAvailable(boolean available) {
+        this.available = available;
     }
 
 }
