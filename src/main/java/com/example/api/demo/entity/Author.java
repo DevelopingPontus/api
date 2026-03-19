@@ -25,8 +25,6 @@ public class Author {
     @Schema(description = "Authors last name")
     private String lastName;
 
-    @OneToMany(mappedBy = "author")
-    List<Book> books;
     
     public Author() {
         
@@ -70,14 +68,6 @@ public class Author {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
-    }
-
-    public List<Book> getBooks() {
-        return books;
-    }
-
-    public void setBooks(List<Book> books) {
-        this.books = books;
     }
 
 

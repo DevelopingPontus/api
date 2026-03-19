@@ -14,6 +14,8 @@ import com.example.api.demo.exception.BookNotFoundException;
 import com.example.api.demo.exception.BooksNotFoundException;
 import com.example.api.demo.exception.ValidationException;
 
+import jakarta.persistence.EntityNotFoundException;
+
 // Spring
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -48,10 +50,17 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>("URI syntax error", HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<String> handleEntitityNotFoundException(BooksNotFoundException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
+
     // Spring
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> handleGeneralException(Exception ex) {
         return new ResponseEntity<>("Jikes error", HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
 
 }
