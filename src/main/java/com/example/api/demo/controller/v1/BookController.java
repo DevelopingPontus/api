@@ -84,8 +84,7 @@ public class BookController {
                 entity.getId(),
                 entity.getTitle(),
                 entity.getDescription(),
-                entity.getIsbn(),
-                entity.getYear());
+                entity.getIsbn());
     }
 
     public Book toEntity(BookRequest request) {
@@ -93,8 +92,7 @@ public class BookController {
                 request.id(),
                 request.title(),
                 request.description(),
-                request.isbn(),
-                request.year());
+                request.isbn());
     }
 
 }

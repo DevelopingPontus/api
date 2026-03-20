@@ -18,7 +18,6 @@ import com.example.api.demo.dto.mapper.v2.Authormapper2;
 import com.example.api.demo.dto.mapper.v2.BookMapper2;
 import com.example.api.demo.dto.v2.AuthorRequest2;
 import com.example.api.demo.dto.v2.AuthorResponse2;
-import com.example.api.demo.dto.v2.BookResponse2;
 import com.example.api.demo.dto.v2.ResponseWrapper;
 import com.example.api.demo.entity.Author;
 import com.example.api.demo.service.AuthorService;
@@ -121,15 +120,7 @@ public class AuthorController2 {
         return ResponseEntity.noContent().build();
     }
 
-    // Get all books by author id
-    @GetMapping("/{id}/books")
-    @Operation(summary = "Get all books by author id", description = "Returns all books by author id")
-    @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "OK"),
-            @ApiResponse(responseCode = "404", description = "Author not found") })
-    public ResponseEntity<List<BookResponse2>> getBooksByAuthorId(@PathVariable Long id) {
-        return ResponseEntity.ok(service.findAllByAuthorId(id).stream().map(this.bookMapper::toDto).toList());
-
-    }
+  
 
     
 }

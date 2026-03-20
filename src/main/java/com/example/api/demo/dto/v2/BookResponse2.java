@@ -5,7 +5,6 @@ public record BookResponse2(
                 String title,
                 String description,
                 String isbn,
-                int year,
                 boolean available) {
 
 }

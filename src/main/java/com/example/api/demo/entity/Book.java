@@ -11,7 +11,7 @@ import jakarta.validation.constraints.NotBlank;
 
 // Jakarta
 @Entity
-@Table
+@Table(name = "books")
 public class Book {
     // Jakarta
     @Id
@@ -23,24 +23,15 @@ public class Book {
 
     // Jakarta
     @NotBlank(message = "Title required")
-    // OpenApi
-    @Schema(description = "Title")
     private String title;
 
     // Jakarta
     @NotBlank(message = "Description required")
-    // OpenApi
-    @Schema(description = "Description")
     private String description;
 
     // Jakarta
     @NotBlank(message = "ISBN required")
-    // OpenApi
-    @Schema(description = "ISBN")
     private String isbn;
-
-    @Schema(description = "Publication year")
-    private int year;
 
     @Schema(description = "Available")
     private boolean available;
@@ -52,27 +43,24 @@ public class Book {
 
     }
 
-    public Book(String title, String description, String isbn, int year) {
+    public Book(String title, String description, String isbn) {
         this.title = title;
         this.description = description;
         this.isbn = isbn;
-        this.year = year;
     }
 
-    public Book(Long id, String title, String description, String isbn, int year) {
+    public Book(Long id, String title, String description, String isbn) {
         this.id = id;
         this.title = title;
         this.description = description;
         this.isbn = isbn;
-        this.year = year;
     }
 
-    public Book(Long id, String title, String description, String isbn, int year, boolean available) {
+    public Book(Long id, String title, String description, String isbn, boolean available) {
         this.id = id;
         this.title = title;
         this.description = description;
         this.isbn = isbn;
-        this.year = year;
         this.available = available;
     }
 
@@ -118,14 +106,6 @@ public class Book {
 
     public void setIsbn(String isbn) {
         this.isbn = isbn;
-    }
-
-    public int getYear() {
-        return year;
-    }
-
-    public void setYear(int year) {
-        this.year = year;
     }
 
     public boolean isAvailable() {

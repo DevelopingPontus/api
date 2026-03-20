@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.example.api.demo.entity.Author;
-import com.example.api.demo.entity.Book;
 import com.example.api.demo.repository.AuthorRepository;
 
 @Service
@@ -46,7 +45,4 @@ public class AuthorService {
         return null;
     }
 
-    public List<Book> findAllByAuthorId(Long id) {
-        return repository.findById(id).get().getBooks();
-    }
 }

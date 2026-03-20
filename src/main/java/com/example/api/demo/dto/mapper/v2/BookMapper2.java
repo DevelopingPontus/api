@@ -15,7 +15,6 @@ public class BookMapper2 {
                 entity.getTitle(),
                 entity.getDescription(),
                 entity.getIsbn(),
-                entity.getYear(),
                 entity.isAvailable());
     }
 
@@ -24,8 +23,6 @@ public class BookMapper2 {
                 request.id(),
                 request.title(),
                 request.description(),
-                request.isbn(),
-                request.year(),
-                request.available());
+                request.isbn());
     }
 }
