@@ -1,28 +1,24 @@
 package com.example.api.demo.entity;
 
 
-import java.util.List;
-
-import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 
 @Entity
+@Table(name = "authors")
 public class Author {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotBlank
-    @Schema(description = "Authors first name")
     private String firstName;
 
     @NotBlank
-    @Schema(description = "Authors last name")
     private String lastName;
 
     
@@ -35,11 +31,6 @@ public class Author {
         this.lastName = lastName;
     }
 
-    public Author(Long id, @NotBlank String firstName, @NotBlank String lastName) {
-        this.id = id;
-        this.firstName = firstName;
-        this.lastName = lastName;
-    }
 
     public Long getId() {
         return id;
