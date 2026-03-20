@@ -14,18 +14,13 @@ public class BookMapper2 {
                 entity.getId(),
                 entity.getTitle(),
                 entity.getDescription(),
-                entity.getIsbn(),
-                entity.getYear(),
-                entity.isAvailable());
+                entity.getIsbn());
     }
 
     public Book toEntity(BookRequest2 request) {
         return new Book(
-                request.id(),
                 request.title(),
                 request.description(),
-                request.isbn(),
-                request.year(),
-                request.available());
+                request.isbn());
     }
 }

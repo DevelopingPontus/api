@@ -7,7 +7,6 @@ public record BookRequest(
                 @Schema(description = "Book ID (is generatd)", example = "null") Long id,
                 @NotBlank(message = "Title required") @Schema(description = "Book Title") String title,
                 @NotBlank(message = "Description required") @Schema(description = "Book Description") String description,
-                @NotBlank(message = "ISBN required") @Schema(description = "Book ISBN") String isbn,
-                @Schema(description = "Book Publication Year") Integer year) {
+                @NotBlank(message = "ISBN required") @Schema(description = "Book ISBN") String isbn) {
 
 }

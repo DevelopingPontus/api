@@ -1,10 +1,6 @@
 package com.example.api.demo.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 
 @Entity
@@ -23,22 +19,17 @@ public class Book {
     @NotBlank(message = "ISBN required")
     private String isbn;
 
-    private int year;
-
-    private boolean available;
+    private Boolean available;
 
     public Book() {
     }
 
-    public Book(String title, String description, String isbn, int year) {
+    public Book(String title, String description, String isbn) {
         this.title = title;
         this.description = description;
         this.isbn = isbn;
-        this.year = year;
-        this.available = true; // Default value
+        this.available = true;
     }
-
-
 
     @Override
     public String toString() {
@@ -46,9 +37,12 @@ public class Book {
                 "id=" + id +
                 ", title='" + title + '\'' +
                 ", description='" + description + '\'' +
+                ", isbn='" + isbn + '\'' +
+                ", available=" + available +
                 '}';
     }
 
+    // Getters and Setters...
     public Long getId() {
         return id;
     }
@@ -81,20 +75,11 @@ public class Book {
         this.isbn = isbn;
     }
 
-    public int getYear() {
-        return year;
-    }
-
-    public void setYear(int year) {
-        this.year = year;
-    }
-
-    public boolean isAvailable() {
+    public Boolean isAvailable() {
         return available;
     }
 
-    public void setAvailable(boolean available) {
+    public void setAvailable(Boolean available) {
         this.available = available;
     }
-
 }

@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 
+import com.example.api.demo.service.AbstractGenericService;
 import com.example.api.demo.service.GenericService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -16,14 +17,15 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 
+
 public abstract class AbstractGenericController<T, ID, RQ, RS> {
 
-    protected final GenericService<T, ID> genericService;
+    protected final AbstractGenericService<T, ID> genericService;
     private final Class<RQ> requestClass;
     private final Class<RS> responseClass;
 
     protected AbstractGenericController(
-            GenericService<T, ID> service,
+            AbstractGenericService<T, ID> service,
             Class<RQ> requestClass,
             Class<RS> responseClass) {
         this.genericService = service;

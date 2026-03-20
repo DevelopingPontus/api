@@ -21,6 +21,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 
 // Spring
@@ -58,7 +59,8 @@ public class BookController {
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     public ResponseEntity<BookResponse> findById(@PathVariable @Valid Long id) {
-        BookResponse res = toDto(service.findById(id));
+        Book book = service.findById(id).orElseThrow(() -> new EntityNotFoundException("Book not found"));
+        BookResponse res = toDto(book);
         return ResponseEntity.ok(res);
     }
 
@@ -84,17 +86,14 @@ public class BookController {
                 entity.getId(),
                 entity.getTitle(),
                 entity.getDescription(),
-                entity.getIsbn(),
-                entity.getYear());
+                entity.getIsbn());
     }
 
     public Book toEntity(BookRequest request) {
         return new Book(
-                request.id(),
                 request.title(),
                 request.description(),
-                request.isbn(),
-                request.year());
+                request.isbn());
     }
 
 }

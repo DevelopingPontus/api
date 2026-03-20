@@ -14,11 +14,6 @@ public abstract class AbstractGenericService<T, ID> implements GenericService<T,
         this.repository = repository;
     }
 
-
-    // @Override
-    // public T save(T entity) {
-    //     return entity;
-    // }
     @Override
     public T save(T entity) {
         return repository.save(entity);

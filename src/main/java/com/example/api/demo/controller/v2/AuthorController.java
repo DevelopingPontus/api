@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.api.demo.dto.v2.AuthorRequest2;
 import com.example.api.demo.dto.v2.AuthorResponse2;
 import com.example.api.demo.entity.Author;
+import com.example.api.demo.service.AbstractGenericService;
 import com.example.api.demo.service.GenericService;
 
 
@@ -13,7 +14,7 @@ import com.example.api.demo.service.GenericService;
 @RequestMapping("/api/v2/authors")
 public class AuthorController extends AbstractGenericController<Author, Long, AuthorRequest2, AuthorResponse2> {
 
-    public AuthorController(GenericService<Author, Long> service) {
+    public AuthorController(AbstractGenericService<Author, Long> service) {
         super(service, AuthorRequest2.class, AuthorResponse2.class);
     }
 

@@ -6,6 +6,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.api.demo.dto.v2.BookRequest2;
 import com.example.api.demo.dto.v2.BookResponse2;
 import com.example.api.demo.entity.Book;
+import com.example.api.demo.service.AbstractGenericService;
+import com.example.api.demo.service.BookService;
 import com.example.api.demo.service.GenericService;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -15,20 +17,20 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @RequestMapping("api/v2/books")
 // OpenApi
 @Tag(name = "Books", description = "Operations related to books")
-public class BookController2 extends AbstractGenericController<Book ,Long,BookRequest2, BookResponse2> {
+public class BookController2 extends AbstractGenericController<Book ,Long ,BookRequest2 , BookResponse2> {
 
-    public BookController2(GenericService<Book, Long> service) {
+    public BookController2(BookService service) {
         super(service, BookRequest2.class, BookResponse2.class);
     }
 
 @Override
     protected Book convertToEntity(BookRequest2 request) {
         // You may use a mapping framework (e.g., MapStruct) here.
-        return new Book(request.id(), request.title(), request.description(), request.isbn(), request.year());
+        return new Book(request.title(), request.description(), request.isbn());
     }
 
     @Override
     protected BookResponse2 convertToResponse(Book entity) {
-        return new BookResponse2(entity.getId(), entity.getTitle(), entity.getDescription(), entity.getIsbn(), entity.getYear(), entity.isAvailable());
+        return new BookResponse2(entity.getId(), entity.getTitle(), entity.getDescription(), entity.getIsbn());
     }
 }
