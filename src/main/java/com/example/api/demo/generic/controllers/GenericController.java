@@ -1,13 +1,8 @@
 package com.example.api.demo.generic.controllers;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.tags.Tag;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.example.api.demo.generic.interfaces.EntityInterface;
 import com.example.api.demo.generic.interfaces.MapperInterface;
@@ -18,7 +13,6 @@ import jakarta.persistence.MappedSuperclass;
 import java.util.List;
 
 @MappedSuperclass
-@RequestMapping("/api")
 public abstract class GenericController<T extends EntityInterface, DTO> {
 
     protected final GenericService<T> service;
@@ -30,17 +24,11 @@ public abstract class GenericController<T extends EntityInterface, DTO> {
         this.mapper = mapper;
     }
 
-    @Operation(summary = "Get all entities", description = "Retrieve a list of all entities")
-    @ApiResponse(responseCode = "200", description = "Successfully retrieved the list of entities")
     public ResponseEntity<List<DTO>> getAll() {
         List<DTO> entities = mapper.entityListToDtoList(service.getAll());
         return ResponseEntity.ok(entities);
     }
 
-    @Operation(summary = "Get entity by ID", description = "Retrieve an entity by its ID")
-    @Parameter(name = "id", required = true, description = "ID of the entity to retrieve")
-    @ApiResponse(responseCode = "200", description = "Successfully retrieved the entity")
-    @ApiResponse(responseCode = "404", description = "Entity not found")
     public ResponseEntity<DTO> getById(Long id) {
         DTO entity = mapper.entityToDto(service.getById(id));
         if (entity == null) {
@@ -49,16 +37,11 @@ public abstract class GenericController<T extends EntityInterface, DTO> {
         return ResponseEntity.ok(entity);
     }
 
-    @Operation(summary = "Save a new entity", description = "Create a new entity")
-    @ApiResponse(responseCode = "201", description = "Entity created successfully")
     public ResponseEntity<DTO> save(T entity) {
         DTO savedEntity = mapper.entityToDto(service.save(entity));
         return ResponseEntity.status(201).body(savedEntity);
     }
 
-    @Operation(summary = "Delete an entity by ID", description = "Delete an entity by its ID")
-    @Parameter(name = "id", required = true, description = "ID of the entity to delete")
-    @ApiResponse(responseCode = "204", description = "Entity deleted successfully")
     public ResponseEntity<Void> deleteById(Long id) {
         service.deleteById(id);
         return ResponseEntity.noContent().build();
