@@ -3,7 +3,6 @@ package com.example.api.demo.generic.controllers;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 
@@ -16,7 +15,6 @@ import jakarta.persistence.MappedSuperclass;
 import java.util.List;
 
 @MappedSuperclass
-@Tag(name = "Generic API", description = "Operations on generic entities")
 public abstract class GenericController<T extends EntityInterface, DTO> {
 
     protected final GenericService<T> service;
