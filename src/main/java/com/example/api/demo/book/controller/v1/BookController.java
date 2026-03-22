@@ -10,7 +10,7 @@ import com.example.api.demo.book.service.BookService;
 import com.example.api.demo.generic.controllers.GenericController;
 
 @RestController
-@RequestMapping("/api/books")
+@RequestMapping("/api/v1/books")
 public class BookController extends GenericController<Book, BookDTO> {
 
     @Autowired
