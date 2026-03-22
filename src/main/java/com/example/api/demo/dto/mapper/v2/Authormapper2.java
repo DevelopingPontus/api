@@ -17,6 +17,7 @@ public class Authormapper2 {
         return new AuthorResponse2(
                 ent.getId(),
                 ent.getFirstName(),
-                ent.getLastName());
+                ent.getLastName(),
+                ent.getBooks());
     }
 }

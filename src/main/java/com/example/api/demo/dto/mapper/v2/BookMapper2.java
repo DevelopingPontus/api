@@ -1,5 +1,7 @@
 package com.example.api.demo.dto.mapper.v2;
 
+import java.util.List;
+
 import org.springframework.stereotype.Component;
 
 import com.example.api.demo.dto.v2.BookRequest2;
@@ -16,6 +18,10 @@ public class BookMapper2 {
                 entity.getDescription(),
                 entity.getIsbn(),
                 entity.isAvailable());
+    }
+
+    public List<BookResponse2> listToDtoList(List<Book> entities) {
+        return entities.stream().map(this::toDto).toList();
     }
 
     public Book toEntity(BookRequest2 request) {

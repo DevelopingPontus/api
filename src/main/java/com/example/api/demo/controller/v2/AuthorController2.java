@@ -18,9 +18,12 @@ import com.example.api.demo.dto.mapper.v2.Authormapper2;
 import com.example.api.demo.dto.mapper.v2.BookMapper2;
 import com.example.api.demo.dto.v2.AuthorRequest2;
 import com.example.api.demo.dto.v2.AuthorResponse2;
+import com.example.api.demo.dto.v2.BookResponse2;
 import com.example.api.demo.dto.v2.ResponseWrapper;
 import com.example.api.demo.entity.Author;
+import com.example.api.demo.entity.Book;
 import com.example.api.demo.service.AuthorService;
+import com.example.api.demo.service.BooksByAuthorService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -32,11 +35,14 @@ import jakarta.validation.Valid;
 @RequestMapping("api/v2/authors")
 public class AuthorController2 {
     private final AuthorService service;
+    private final BooksByAuthorService booksByAuthorService;
     private final Authormapper2 authMapper;
     private final BookMapper2 bookMapper;
 
-    public AuthorController2(AuthorService service, Authormapper2 authMapper, BookMapper2 bookMapper) {
+    public AuthorController2(AuthorService service, BooksByAuthorService booksByAuthorService, Authormapper2 authMapper,
+            BookMapper2 bookMapper) {
         this.service = service;
+        this.booksByAuthorService = booksByAuthorService;
         this.authMapper = authMapper;
         this.bookMapper = bookMapper;
     }
@@ -120,7 +126,17 @@ public class AuthorController2 {
         return ResponseEntity.noContent().build();
     }
 
-  
+    @GetMapping("/{id}/books")
+    @Operation(summary = "Getts all books writen by author", description = "Gets all books written by an author")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Books found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    public ResponseEntity<List<BookResponse2>> getBooksByAuthor(@PathVariable Long id) {
+        List<Book> books = booksByAuthorService.getBooksByAuthor(id);
+        List<BookResponse2> bookResponses = bookMapper.listToDtoList(books);
 
-    
+        return ResponseEntity.ok(bookResponses);
+    }
+
 }
