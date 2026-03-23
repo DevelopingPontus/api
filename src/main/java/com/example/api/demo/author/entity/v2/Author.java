@@ -1,13 +1,10 @@
-package com.example.api.demo.entity;
+package com.example.api.demo.author.entity.v2;
 
-
-import java.util.List;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 
@@ -24,8 +21,6 @@ public class Author {
     @NotBlank
     private String lastName;
 
-    @OneToMany(mappedBy = "author")
-    List<Book> books;
     
     public Author() {
         
@@ -36,11 +31,6 @@ public class Author {
         this.lastName = lastName;
     }
 
-    public Author(Long id, @NotBlank String firstName, @NotBlank String lastName) {
-        this.id = id;
-        this.firstName = firstName;
-        this.lastName = lastName;
-    }
 
     public Long getId() {
         return id;
@@ -69,14 +59,6 @@ public class Author {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
-    }
-
-    public List<Book> getBooks() {
-        return books;
-    }
-
-    public void setBooks(List<Book> books) {
-        this.books = books;
     }
 
 
