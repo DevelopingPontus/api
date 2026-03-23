@@ -7,6 +7,5 @@ public record BookDTO(
         @Schema(description = "Title of the book") String title,
         @Schema(description = "Author of the book") String author,
         @Schema(description = "ISBN number of the book") String isbn,
-        @Schema(description = "Year the book was published") int publishedYear
-) {
+        @Schema(description = "Year the book was published") int publishedYear) {
 }
