@@ -3,11 +3,9 @@ package com.example.api.demo.generic.controllers;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.tags.Tag;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -58,9 +56,10 @@ public abstract class GenericController<T extends EntityInterface, DTO> {
     @Operation(summary = "Save a new entity", description = "Create a new entity")
     @ApiResponse(responseCode = "201", description = "Entity created successfully")
     @PostMapping
-    public ResponseEntity<DTO> save(@RequestBody T entity) {
-        DTO savedEntity = mapper.entityToDto(service.save(entity));
-        return ResponseEntity.status(201).body(savedEntity);
+    public ResponseEntity<DTO> save(@RequestBody DTO dto) {
+        T entity = mapper.dtoToEntity(dto);
+        DTO savedEntityDto = mapper.entityToDto(service.save(entity));
+        return ResponseEntity.status(201).body(savedEntityDto);
     }
 
     @Operation(summary = "Delete an entity by ID", description = "Delete an entity by its ID")
