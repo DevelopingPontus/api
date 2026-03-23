@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import com.example.api.demo.generic.interfaces.EntityInterface;
 import com.example.api.demo.generic.interfaces.MapperInterface;
 import com.example.api.demo.generic.services.GenericService;
+import com.example.api.demo.generic.wrappers.GenericWrapperResponse;
 
 import jakarta.persistence.MappedSuperclass;
 
@@ -35,9 +36,10 @@ public abstract class GenericController<T extends EntityInterface, DTO> {
     @Operation(summary = "Get all entities", description = "Retrieve a list of all entities")
     @ApiResponse(responseCode = "200", description = "Successfully retrieved the list of entities")
     @GetMapping
-    public ResponseEntity<List<DTO>> getAll() {
+    public ResponseEntity<GenericWrapperResponse<DTO>> getAll() {
         List<DTO> entities = mapper.entityListToDtoList(service.getAll());
-        return ResponseEntity.ok(entities);
+        GenericWrapperResponse<DTO> wrapperResponse = new GenericWrapperResponse<>(entities, "v2");
+        return ResponseEntity.ok(wrapperResponse);
     }
 
     @Operation(summary = "Get entity by ID", description = "Retrieve an entity by its ID")
@@ -45,21 +47,25 @@ public abstract class GenericController<T extends EntityInterface, DTO> {
     @ApiResponse(responseCode = "200", description = "Successfully retrieved the entity")
     @ApiResponse(responseCode = "404", description = "Entity not found")
     @GetMapping("/{id}")
-    public ResponseEntity<DTO> getById(@PathVariable Long id) {
+    public ResponseEntity<GenericWrapperResponse<DTO>> getById(@PathVariable Long id) {
         DTO entity = mapper.entityToDto(service.getById(id));
         if (entity == null) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(entity);
+        List<DTO> singleList = List.of(entity);
+        GenericWrapperResponse<DTO> wrapperResponse = new GenericWrapperResponse<>(singleList, "v2");
+        return ResponseEntity.ok(wrapperResponse);
     }
 
     @Operation(summary = "Save a new entity", description = "Create a new entity")
     @ApiResponse(responseCode = "201", description = "Entity created successfully")
     @PostMapping
-    public ResponseEntity<DTO> save(@RequestBody DTO dto) {
+    public ResponseEntity<GenericWrapperResponse<DTO>> save(@RequestBody DTO dto) {
         T entity = mapper.dtoToEntity(dto);
         DTO savedEntityDto = mapper.entityToDto(service.save(entity));
-        return ResponseEntity.status(201).body(savedEntityDto);
+        List<DTO> singleList = List.of(savedEntityDto);
+        GenericWrapperResponse<DTO> wrapperResponse = new GenericWrapperResponse<>(singleList, "v2");
+        return ResponseEntity.status(201).body(wrapperResponse);
     }
 
     @Operation(summary = "Delete an entity by ID", description = "Delete an entity by its ID")
