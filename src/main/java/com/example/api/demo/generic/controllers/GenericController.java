@@ -22,23 +22,25 @@ import jakarta.persistence.MappedSuperclass;
 import java.util.List;
 
 @MappedSuperclass
-public abstract class GenericController<T extends EntityInterface, DTO> {
+public abstract class GenericController<T extends EntityInterface, ReqDto, ResDto> {
 
     protected final GenericService<T> service;
-    protected final MapperInterface<T, DTO> mapper;
+    protected final MapperInterface<T, ReqDto, ResDto> mapper;
+    protected final String version;
 
     @Autowired
-    protected GenericController(GenericService<T> service, MapperInterface<T, DTO> mapper) {
+    protected GenericController(GenericService<T> service, MapperInterface<T, ReqDto, ResDto> mapper, String version) {
         this.service = service;
         this.mapper = mapper;
+        this.version = version;
     }
 
     @Operation(summary = "Get all entities", description = "Retrieve a list of all entities")
     @ApiResponse(responseCode = "200", description = "Successfully retrieved the list of entities")
     @GetMapping
-    public ResponseEntity<GenericWrapperResponse<DTO>> getAll() {
-        List<DTO> entities = mapper.entityListToDtoList(service.getAll());
-        GenericWrapperResponse<DTO> wrapperResponse = new GenericWrapperResponse<>(entities, "v2");
+    public ResponseEntity<GenericWrapperResponse<ResDto>> getAll() {
+        List<ResDto> entities = mapper.entityListToDtoList(service.getAll());
+        GenericWrapperResponse<ResDto> wrapperResponse = new GenericWrapperResponse<>(entities, version);
         return ResponseEntity.ok(wrapperResponse);
     }
 
@@ -47,24 +49,24 @@ public abstract class GenericController<T extends EntityInterface, DTO> {
     @ApiResponse(responseCode = "200", description = "Successfully retrieved the entity")
     @ApiResponse(responseCode = "404", description = "Entity not found")
     @GetMapping("/{id}")
-    public ResponseEntity<GenericWrapperResponse<DTO>> getById(@PathVariable Long id) {
-        DTO entity = mapper.entityToDto(service.getById(id));
+    public ResponseEntity<GenericWrapperResponse<ResDto>> getById(@PathVariable Long id) {
+        ResDto entity = mapper.entityToDto(service.getById(id));
         if (entity == null) {
             return ResponseEntity.notFound().build();
         }
-        List<DTO> singleList = List.of(entity);
-        GenericWrapperResponse<DTO> wrapperResponse = new GenericWrapperResponse<>(singleList, "v2");
+        List<ResDto> singleList = List.of(entity);
+        GenericWrapperResponse<ResDto> wrapperResponse = new GenericWrapperResponse<>(singleList, version);
         return ResponseEntity.ok(wrapperResponse);
     }
 
     @Operation(summary = "Save a new entity", description = "Create a new entity")
     @ApiResponse(responseCode = "201", description = "Entity created successfully")
     @PostMapping
-    public ResponseEntity<GenericWrapperResponse<DTO>> save(@RequestBody DTO dto) {
+    public ResponseEntity<GenericWrapperResponse<ResDto>> save(@RequestBody ReqDto dto) {
         T entity = mapper.dtoToEntity(dto);
-        DTO savedEntityDto = mapper.entityToDto(service.save(entity));
-        List<DTO> singleList = List.of(savedEntityDto);
-        GenericWrapperResponse<DTO> wrapperResponse = new GenericWrapperResponse<>(singleList, "v2");
+        ResDto savedEntityDto = mapper.entityToDto(service.save(entity));
+        List<ResDto> singleList = List.of(savedEntityDto);
+        GenericWrapperResponse<ResDto> wrapperResponse = new GenericWrapperResponse<>(singleList, version);
         return ResponseEntity.status(201).body(wrapperResponse);
     }
 

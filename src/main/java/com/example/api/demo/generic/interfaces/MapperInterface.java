@@ -5,12 +5,12 @@ import java.util.List;
 import jakarta.persistence.MappedSuperclass;
 
 @MappedSuperclass
-public interface MapperInterface<T, DTO> {
-    T dtoToEntity(DTO dto);
+public interface MapperInterface<T, ReqDto, ResDto> {
+    T dtoToEntity(ReqDto dto);
 
-    DTO entityToDto(T entity);
+    ResDto entityToDto(T entity);
     
-    List<T> dtoListToEntityList(List<DTO> dtos);
+    List<T> dtoListToEntityList(List<ReqDto> dtos);
 
-    List<DTO> entityListToDtoList(List<T> entities);
+    List<ResDto> entityListToDtoList(List<T> entities);
 }

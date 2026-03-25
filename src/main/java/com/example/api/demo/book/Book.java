@@ -1,5 +1,6 @@
-package com.example.api.demo.book.entity;
+package com.example.api.demo.book;
 
+import com.example.api.demo.author.Author;
 import com.example.api.demo.generic.interfaces.EntityInterface;
 
 import jakarta.persistence.*;
@@ -11,20 +12,22 @@ public class Book implements EntityInterface {
     private Long id;
 
     private String title;
-    private String author;
+    private Author author;
     private String isbn;
     private int publishedYear;
+    private boolean available;
 
     // Constructors, getters, and setters
 
     public Book() {
     }
 
-    public Book(String title, String author, String isbn, int publishedYear) {
+    public Book(String title, Author author, String isbn, int publishedYear) {
         this.title = title;
         this.author = author;
         this.isbn = isbn;
         this.publishedYear = publishedYear;
+        this.available = true;
     }
 
     @Override
@@ -45,11 +48,11 @@ public class Book implements EntityInterface {
         this.title = title;
     }
 
-    public String getAuthor() {
+    public Author getAuthor() {
         return author;
     }
 
-    public void setAuthor(String author) {
+    public void setAuthor(Author author) {
         this.author = author;
     }
 
@@ -67,5 +70,13 @@ public class Book implements EntityInterface {
 
     public void setPublishedYear(int publishedYear) {
         this.publishedYear = publishedYear;
+    }
+
+    public boolean isAvailable() {
+        return available;
+    }
+
+    public void setAvailable(boolean available) {
+        this.available = available;
     }
 }

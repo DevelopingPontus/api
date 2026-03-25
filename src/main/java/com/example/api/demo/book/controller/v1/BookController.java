@@ -5,8 +5,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import com.example.api.demo.book.dto.v1.BookDTO;
-import com.example.api.demo.book.entity.Book;
+import com.example.api.demo.book.Book;
+import com.example.api.demo.book.dto.v1.BookReq1;
+import com.example.api.demo.book.dto.v1.BookRes1;
 import com.example.api.demo.book.mapper.BookMapper;
 import com.example.api.demo.book.service.BookService;
 import com.example.api.demo.generic.controllers.GenericController;
@@ -14,11 +15,11 @@ import com.example.api.demo.generic.controllers.GenericController;
 @RestController
 @RequestMapping("/api/v1/books")
 @Tag(name = "Books", description = "Operations related to books")
-public class BookController extends GenericController<Book, BookDTO> {
+public class BookController extends GenericController<Book, BookReq1, BookRes1> {
 
     @Autowired
     public BookController(BookService service, BookMapper mapper) {
-        super(service, mapper);
+        super(service, mapper, "v1");
     }
     // No need to override methods if they are already defined in the
     // GenericController

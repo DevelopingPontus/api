@@ -4,23 +4,24 @@ import java.util.List;
 
 import org.springframework.stereotype.Component;
 
-import com.example.api.demo.book.dto.v1.BookDTO;
-import com.example.api.demo.book.entity.Book;
+import com.example.api.demo.book.Book;
+import com.example.api.demo.book.dto.v1.BookReq1;
+import com.example.api.demo.book.dto.v1.BookRes1;
 import com.example.api.demo.generic.interfaces.MapperInterface;
 import java.util.Collections;
 
 @Component
-public class BookMapper implements MapperInterface<Book, BookDTO> {
+public class BookMapper implements MapperInterface<Book, BookReq1, BookRes1> {
     @Override
-    public BookDTO entityToDto(Book book) {
+    public BookRes1 entityToDto(Book book) {
         if (book == null) {
             return null;
         }
-        return new BookDTO(book.getId(), book.getTitle(), book.getAuthor(), book.getIsbn(), book.getPublishedYear());
+        return new BookRes1(book.getId(), book.getTitle(), book.getAuthor().getName(), book.getIsbn(), book.getPublishedYear(), book.isAvailable());
     }
 
     @Override
-    public Book dtoToEntity(BookDTO bookDTO) {
+    public Book dtoToEntity(BookReq1 bookDTO) {
         if (bookDTO == null) {
             return null;
         }
@@ -28,7 +29,7 @@ public class BookMapper implements MapperInterface<Book, BookDTO> {
     }
 
     @Override
-    public List<Book> dtoListToEntityList(List<BookDTO> dtos) {
+    public List<Book> dtoListToEntityList(List<BookReq1> dtos) {
         if (dtos == null) {
             return Collections.emptyList();
         }
@@ -36,7 +37,7 @@ public class BookMapper implements MapperInterface<Book, BookDTO> {
     }
 
     @Override
-    public List<BookDTO> entityListToDtoList(List<Book> entities) {
+    public List<BookRes1> entityListToDtoList(List<Book> entities) {
         if (entities == null) {
             return Collections.emptyList();
         }
