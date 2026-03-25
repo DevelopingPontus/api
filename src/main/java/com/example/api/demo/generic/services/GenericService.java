@@ -1,6 +1,5 @@
 package com.example.api.demo.generic.services;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.example.api.demo.generic.interfaces.EntityInterface;

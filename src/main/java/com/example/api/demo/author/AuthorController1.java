@@ -1,5 +1,18 @@
 package com.example.api.demo.author;
 
-public class AuthorController1 {
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.example.api.demo.author.dto.AuthorReq1;
+import com.example.api.demo.author.dto.AuthorRes1;
+import com.example.api.demo.generic.controllers.GenericController;
+
+@RestController
+@RequestMapping("/api/v1/authors")
+public class AuthorController1 extends GenericController<Author, AuthorReq1, AuthorRes1> {
+
+    protected AuthorController1(AuthorService service, AuthorMapper mapper) {
+        super(service, mapper, "v1");
+    }
 
 }

@@ -15,10 +15,10 @@ import com.example.api.demo.generic.controllers.GenericController;
 @RestController
 @RequestMapping("/api/v1/books")
 @Tag(name = "Books", description = "Operations related to books")
-public class BookController extends GenericController<Book, BookReq1, BookRes1> {
+public class BookController1 extends GenericController<Book, BookReq1, BookRes1> {
 
     @Autowired
-    public BookController(BookService service, BookMapper mapper) {
+    public BookController1(BookService service, BookMapper mapper) {
         super(service, mapper, "v1");
     }
     // No need to override methods if they are already defined in the

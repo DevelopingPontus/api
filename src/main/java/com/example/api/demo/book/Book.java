@@ -12,6 +12,7 @@ public class Book implements EntityInterface {
     private Long id;
 
     private String title;
+    @ManyToOne
     private Author author;
     private String isbn;
     private int publishedYear;
