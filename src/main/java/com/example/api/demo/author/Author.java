@@ -34,6 +34,7 @@ public class Author implements EntityInterface {
 
     public Author(@NotBlank String name) {
         this.name = name;
+        this.books = List.of();
     }
 
 

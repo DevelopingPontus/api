@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Component;
 
+import com.example.api.demo.author.Author;
 import com.example.api.demo.book.Book;
 import com.example.api.demo.book.dto.v1.BookReq1;
 import com.example.api.demo.book.dto.v1.BookRes1;
@@ -25,7 +26,7 @@ public class BookMapper implements MapperInterface<Book, BookReq1, BookRes1> {
         if (bookDTO == null) {
             return null;
         }
-        return new Book(bookDTO.title(), bookDTO.author(), bookDTO.isbn(), bookDTO.publishedYear());
+        return new Book(bookDTO.title(), bookDTO.isbn(), bookDTO.publishedYear());
     }
 
     @Override

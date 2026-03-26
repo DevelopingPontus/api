@@ -24,12 +24,12 @@ import java.util.List;
 @MappedSuperclass
 public abstract class GenericController<T extends EntityInterface, ReqDto, ResDto> {
 
-    protected final GenericService<T> service;
+    protected final GenericService<T, ReqDto, ResDto> service;
     protected final MapperInterface<T, ReqDto, ResDto> mapper;
     protected final String version;
 
     @Autowired
-    protected GenericController(GenericService<T> service, MapperInterface<T, ReqDto, ResDto> mapper, String version) {
+    protected GenericController(GenericService<T, ReqDto, ResDto> service, MapperInterface<T, ReqDto, ResDto> mapper, String version) {
         this.service = service;
         this.mapper = mapper;
         this.version = version;
@@ -63,10 +63,12 @@ public abstract class GenericController<T extends EntityInterface, ReqDto, ResDt
     @ApiResponse(responseCode = "201", description = "Entity created successfully")
     @PostMapping
     public ResponseEntity<GenericWrapperResponse<ResDto>> save(@RequestBody ReqDto dto) {
-        T entity = mapper.dtoToEntity(dto);
-        ResDto savedEntityDto = mapper.entityToDto(service.save(entity));
-        List<ResDto> singleList = List.of(savedEntityDto);
-        GenericWrapperResponse<ResDto> wrapperResponse = new GenericWrapperResponse<>(singleList, version);
+        // T entity = mapper.dtoToEntity(dto);
+        // ResDto savedEntityDto = mapper.entityToDto(service.save(entity));
+        // List<ResDto> singleList = List.of(savedEntityDto);
+
+        List<ResDto> savedDto = service.save(List.of(dto));
+        GenericWrapperResponse<ResDto> wrapperResponse = new GenericWrapperResponse<>(savedDto, version);
         return ResponseEntity.status(201).body(wrapperResponse);
     }
 
