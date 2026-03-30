@@ -7,17 +7,23 @@ import org.springframework.stereotype.Component;
 
 import com.example.api.demo.author.dto.AuthorReq1;
 import com.example.api.demo.author.dto.AuthorRes1;
+import com.example.api.demo.book.mapper.BookMapper;
 import com.example.api.demo.generic.interfaces.MapperInterface;
 
 @Component
 public class AuthorMapper implements MapperInterface<Author, AuthorReq1, AuthorRes1> {
-    
+    private final BookMapper bookMapper;
+
+    public AuthorMapper(BookMapper bookMapper) {
+        this.bookMapper = bookMapper;
+    }
+
     @Override
     public AuthorRes1 entityToDto(Author entity) {
         if (entity == null) {
             return null;
         }
-        return new AuthorRes1(entity.getId(), entity.getName(), entity.getBooks());
+        return new AuthorRes1(entity.getId(), entity.getName(), bookMapper.entityListToDtoList(entity.getBooks()));
     }
 
     @Override
