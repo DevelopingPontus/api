@@ -2,6 +2,7 @@ package com.example.api.demo.book;
 
 import com.example.api.demo.author.Author;
 import com.example.api.demo.generic.interfaces.EntityInterface;
+import com.example.api.demo.loan.Loan;
 
 import jakarta.persistence.*;
 
@@ -17,6 +18,9 @@ public class Book implements EntityInterface {
     private String isbn;
     private int publishedYear;
     private boolean available;
+
+    @OneToOne(mappedBy = "book")
+    private Loan loan;
 
     // Constructors, getters, and setters
 
@@ -79,4 +83,13 @@ public class Book implements EntityInterface {
     public void setAvailable(boolean available) {
         this.available = available;
     }
+
+    public Loan getLoan() {
+        return loan;
+    }
+
+    public void setLoan(Loan loan) {
+        this.loan = loan;
+    }
+
 }
