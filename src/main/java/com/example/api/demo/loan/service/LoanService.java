@@ -1,5 +1,7 @@
 package com.example.api.demo.loan.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.example.api.demo.book.repository.BookRepository;
@@ -17,6 +19,12 @@ public class LoanService extends GenericService<Loan, LoanReq1, LoanRes1> {
     public LoanService(LoanRepository repository, LoanMapper mapper, BookRepository bookRepository) {
         super(repository, mapper);
         this.bookRepository = bookRepository;
+    }
+
+    // TODO: Make logic for making a loan, with regard to book.
+    @Override
+    public List<LoanRes1> save(List<LoanReq1> loanReq1) {
+        return null;
     }
 
 }
