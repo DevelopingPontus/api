@@ -22,12 +22,12 @@ public abstract class GenericService<T extends EntityInterface, ReqDto, ResDto> 
         this.mapper = mapper;
     }
 
-    public List<T> getAll() {
-        return repository.findAll();
+    public List<ResDto> getAll() {
+        return mapper.entityListToDtoList(repository.findAll());
     }
 
-    public T getById(Long id) {
-        return repository.findById(id).orElse(null);
+    public ResDto getById(Long id) {
+        return mapper.entityToDto(repository.findById(id).orElse(null));
     }
 
     public List<ResDto> save(List<ReqDto> dtos) {

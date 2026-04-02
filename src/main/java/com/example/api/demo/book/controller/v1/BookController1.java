@@ -18,8 +18,8 @@ import com.example.api.demo.generic.controllers.GenericController;
 public class BookController1 extends GenericController<Book, BookReq1, BookRes1> {
 
     @Autowired
-    public BookController1(BookService service, BookMapper mapper) {
-        super(service, mapper, "v1");
+    public BookController1(BookService service) {
+        super(service, "v1");
     }
     // No need to override methods if they are already defined in the
     // GenericController

@@ -14,8 +14,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @Tag(name = "Author Controller", description = "Operations about Authors")
 public class AuthorController1 extends GenericController<Author, AuthorReq1, AuthorRes1> {
 
-    protected AuthorController1(AuthorService service, AuthorMapper mapper) {
-        super(service, mapper, "v1");
+    protected AuthorController1(AuthorService service) {
+        super(service, "v1");
     }
 
 }

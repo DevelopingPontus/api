@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.DeleteMapping;
 
 import com.example.api.demo.generic.interfaces.EntityInterface;
-import com.example.api.demo.generic.interfaces.MapperInterface;
 import com.example.api.demo.generic.services.GenericService;
 import com.example.api.demo.generic.wrappers.GenericWrapperResponse;
 
@@ -25,13 +24,11 @@ import java.util.List;
 public abstract class GenericController<T extends EntityInterface, ReqDto, ResDto> {
 
     protected final GenericService<T, ReqDto, ResDto> service;
-    protected final MapperInterface<T, ReqDto, ResDto> mapper;
     protected final String version;
 
     @Autowired
-    protected GenericController(GenericService<T, ReqDto, ResDto> service, MapperInterface<T, ReqDto, ResDto> mapper, String version) {
+    protected GenericController(GenericService<T, ReqDto, ResDto> service, String version) {
         this.service = service;
-        this.mapper = mapper;
         this.version = version;
     }
 
@@ -39,7 +36,7 @@ public abstract class GenericController<T extends EntityInterface, ReqDto, ResDt
     @ApiResponse(responseCode = "200", description = "Successfully retrieved the list of entities")
     @GetMapping
     public ResponseEntity<GenericWrapperResponse<ResDto>> getAll() {
-        List<ResDto> entities = mapper.entityListToDtoList(service.getAll());
+        List<ResDto> entities = (service.getAll());
         GenericWrapperResponse<ResDto> wrapperResponse = new GenericWrapperResponse<>(entities, version);
         return ResponseEntity.ok(wrapperResponse);
     }
@@ -50,7 +47,7 @@ public abstract class GenericController<T extends EntityInterface, ReqDto, ResDt
     @ApiResponse(responseCode = "404", description = "Entity not found")
     @GetMapping("/{id}")
     public ResponseEntity<GenericWrapperResponse<ResDto>> getById(@PathVariable Long id) {
-        ResDto entity = mapper.entityToDto(service.getById(id));
+        ResDto entity = (service.getById(id));
         if (entity == null) {
             return ResponseEntity.notFound().build();
         }
