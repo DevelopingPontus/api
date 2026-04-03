@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.*;
 import com.example.api.demo.book.Book;
 import com.example.api.demo.book.dto.v1.BookReq1;
 import com.example.api.demo.book.dto.v1.BookRes1;
-import com.example.api.demo.book.mapper.BookMapper;
 import com.example.api.demo.book.service.BookService;
 import com.example.api.demo.generic.controllers.GenericController;
 

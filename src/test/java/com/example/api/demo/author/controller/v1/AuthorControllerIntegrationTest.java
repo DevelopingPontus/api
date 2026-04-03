@@ -37,70 +37,69 @@ public class AuthorControllerIntegrationTest {
 
         @BeforeEach
         void setUp() {
-            baseUrl = "http://localhost:" + port + "/api/v1/authors";
-            booksUrl = "http://localhost:" + port + "/api/v1/books";
-            restTemplate = new RestTemplate();
+                baseUrl = "http://localhost:" + port + "/api/v1/authors";
+                booksUrl = "http://localhost:" + port + "/api/v1/books";
+                restTemplate = new RestTemplate();
         }
-        
+
         @Test
         @DisplayName("Should create Author when Book is created")
         void shouldCreateAuthorWhenBookIsCreated() {
-            BookReq1 bookRequest = new BookReq1("Clean Code", "Robert C. Martin", "978-0132350884", 2008);
+                BookReq1 bookRequest = new BookReq1("Clean Code", "Robert C. Martin", "978-0132350884", 2008);
 
-            ResponseEntity<GenericWrapperResponse<BookRes1>> response = restTemplate.exchange(
-                    booksUrl,
-                    org.springframework.http.HttpMethod.POST,
-                    new HttpEntity<>(bookRequest),
-                    new ParameterizedTypeReference<GenericWrapperResponse<BookRes1>>() {
-                    });
+                ResponseEntity<GenericWrapperResponse<BookRes1>> response = restTemplate.exchange(
+                                booksUrl,
+                                org.springframework.http.HttpMethod.POST,
+                                new HttpEntity<>(bookRequest),
+                                new ParameterizedTypeReference<GenericWrapperResponse<BookRes1>>() {
+                                });
 
-            ResponseEntity<GenericWrapperResponse<AuthorRes1>> authorResponse = restTemplate.exchange(
-                    baseUrl,
-                    org.springframework.http.HttpMethod.GET,
-                    null,
-                    new ParameterizedTypeReference<GenericWrapperResponse<AuthorRes1>>() {
-                    });
+                ResponseEntity<GenericWrapperResponse<AuthorRes1>> authorResponse = restTemplate.exchange(
+                                baseUrl,
+                                org.springframework.http.HttpMethod.GET,
+                                null,
+                                new ParameterizedTypeReference<GenericWrapperResponse<AuthorRes1>>() {
+                                });
 
-            assertEquals(HttpStatus.OK, authorResponse.getStatusCode());
-            assertNotNull(authorResponse.getBody());
-            assertEquals("v1", authorResponse.getBody().getVersion());
-            assertNotNull(authorResponse.getBody().getData());
+                assertEquals(HttpStatus.OK, authorResponse.getStatusCode());
+                assertNotNull(authorResponse.getBody());
+                assertEquals("v1", authorResponse.getBody().getVersion());
+                assertNotNull(authorResponse.getBody().getData());
 
-            assertEquals(HttpStatus.CREATED, response.getStatusCode());
-            assertNotNull(response);
-            assertEquals("v1", response.getBody().getVersion());
-            assertEquals(1, response.getBody().getData().size());
+                assertEquals(HttpStatus.CREATED, response.getStatusCode());
+                assertNotNull(response);
+                assertEquals("v1", response.getBody().getVersion());
+                assertEquals(1, response.getBody().getData().size());
         }
-
 
         @Test
         @DisplayName("Should create Author when Book is created")
         void shouldBeRelatedWhenCreated() {
-            BookReq1 bookRequest = new BookReq1("Clean Code", "Robert C. Martin", "978-0132350884", 2008);
+                BookReq1 bookRequest = new BookReq1("Clean Code", "Robert C. Martin", "978-0132350884", 2008);
 
-            ResponseEntity<GenericWrapperResponse<BookRes1>> response = restTemplate.exchange(
-                    booksUrl,
-                    org.springframework.http.HttpMethod.POST,
-                    new HttpEntity<>(bookRequest),
-                    new ParameterizedTypeReference<GenericWrapperResponse<BookRes1>>() {
-                    });
+                ResponseEntity<GenericWrapperResponse<BookRes1>> response = restTemplate.exchange(
+                                booksUrl,
+                                org.springframework.http.HttpMethod.POST,
+                                new HttpEntity<>(bookRequest),
+                                new ParameterizedTypeReference<GenericWrapperResponse<BookRes1>>() {
+                                });
 
-            ResponseEntity<GenericWrapperResponse<AuthorRes1>> authorResponse = restTemplate.exchange(
-                    baseUrl,
-                    org.springframework.http.HttpMethod.GET,
-                    null,
-                    new ParameterizedTypeReference<GenericWrapperResponse<AuthorRes1>>() {
-                    });
+                ResponseEntity<GenericWrapperResponse<AuthorRes1>> authorResponse = restTemplate.exchange(
+                                baseUrl,
+                                org.springframework.http.HttpMethod.GET,
+                                null,
+                                new ParameterizedTypeReference<GenericWrapperResponse<AuthorRes1>>() {
+                                });
 
-            assertEquals(HttpStatus.OK, authorResponse.getStatusCode());
-            assertNotNull(authorResponse.getBody().getData().get(0).books());
-            assertEquals("v1", authorResponse.getBody().getVersion());
-            assertNotNull(authorResponse.getBody().getData());
+                assertEquals(HttpStatus.OK, authorResponse.getStatusCode());
+                assertNotNull(authorResponse.getBody().getData().get(0).books());
+                assertEquals("v1", authorResponse.getBody().getVersion());
+                assertNotNull(authorResponse.getBody().getData());
 
-            assertEquals(HttpStatus.CREATED, response.getStatusCode());
-            assertNotNull(response);
-            assertEquals("v1", response.getBody().getVersion());
-            assertEquals(1, response.getBody().getData().size());
+                assertEquals(HttpStatus.CREATED, response.getStatusCode());
+                assertNotNull(response);
+                assertEquals("v1", response.getBody().getVersion());
+                assertEquals(1, response.getBody().getData().size());
         }
 
 }

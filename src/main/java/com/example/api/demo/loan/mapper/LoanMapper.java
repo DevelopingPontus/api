@@ -3,11 +3,14 @@ package com.example.api.demo.loan.mapper;
 import java.util.Collections;
 import java.util.List;
 
+import org.springframework.stereotype.Component;
+
 import com.example.api.demo.generic.interfaces.MapperInterface;
 import com.example.api.demo.loan.Loan;
 import com.example.api.demo.loan.dto.LoanReq1;
 import com.example.api.demo.loan.dto.LoanRes1;
 
+@Component
 public class LoanMapper implements MapperInterface<Loan, LoanReq1, LoanRes1> {
     @Override
     public LoanRes1 entityToDto(Loan entity) {
