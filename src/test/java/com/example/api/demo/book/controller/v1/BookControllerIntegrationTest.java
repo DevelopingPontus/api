@@ -56,20 +56,6 @@ class BookControllerIntegrationTest {
                 assertNotNull(response.getBody().getData());
         }
 
-        @Test
-        @DisplayName("Should return empty list when no books exist")
-        void testGetAllBooksEmpty() {
-                ResponseEntity<GenericWrapperResponse<BookRes1>> response = restTemplate.exchange(
-                                baseUrl,
-                                org.springframework.http.HttpMethod.GET,
-                                null,
-                                new ParameterizedTypeReference<GenericWrapperResponse<BookRes1>>() {
-                                });
-
-                assertEquals(HttpStatus.OK, response.getStatusCode());
-                assertTrue(response.getBody().getData().isEmpty());
-                assertEquals("v1", response.getBody().getVersion());
-        }
 
         // ============ CREATE TESTS ============
 

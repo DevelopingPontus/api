@@ -8,7 +8,10 @@ import com.example.api.demo.generic.interfaces.MapperInterface;
 
 import jakarta.persistence.MappedSuperclass;
 
+import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @MappedSuperclass
 public abstract class GenericService<T extends EntityInterface, ReqDto, ResDto> {
@@ -39,4 +42,5 @@ public abstract class GenericService<T extends EntityInterface, ReqDto, ResDto> 
     public void deleteById(Long id) {
         repository.deleteById(id);
     }
+
 }

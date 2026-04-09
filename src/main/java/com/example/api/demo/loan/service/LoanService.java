@@ -1,7 +1,10 @@
 package com.example.api.demo.loan.service;
 
+import java.lang.reflect.Field;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,26 +31,6 @@ public class LoanService extends GenericService<Loan, LoanReq1, LoanRes1> {
         this.bookRepository = bookRepository;
     }
 
-    // @Override
-    // public List<LoanRes1> save(List<LoanReq1> loanReq1) {
-    // List<Loan> loans = new ArrayList<>();
-    // for (LoanReq1 loanReq : loanReq1) {
-    // if (bookRepository.findById(loanReq.bookId()).isEmpty()) {
-    // break;
-    // }
-    // Book book = bookRepository.findById(loanReq.bookId()).get();
-    // if (!book.isAvailable()) {
-    // break;
-    // }
-    // book.setAvailable(false);
-    // Loan loan = mapper.dtoToEntity(loanReq);
-    // loan.setBook(book);
-    // loans.add(loan);
-    // }
-    // repository.saveAll(loans);
-    // return mapper.entityListToDtoList(loans);
-    // }
-
     @Override
     @Transactional
     public List<LoanRes1> save(List<LoanReq1> loanReq1) {
@@ -60,10 +43,12 @@ public class LoanService extends GenericService<Loan, LoanReq1, LoanRes1> {
             }
 
             Book book = bookOpt.get();
-            book.setAvailable(false); // Optimistic lock in repository handles race condition
+            book.setAvailable(false);
+            bookRepository.save(book);
 
             Loan loan = mapper.dtoToEntity(loanReq);
             loan.setBook(book);
+            loan.setLoanDate(LocalDate.now());
 
             repository.save(loan);
             results.add(mapper.entityToDto(loan));
@@ -71,4 +56,23 @@ public class LoanService extends GenericService<Loan, LoanReq1, LoanRes1> {
 
         return results;
     }
+
+    @Transactional
+    public List<LoanRes1> update(Long id) {
+
+        List<LoanRes1> res = new ArrayList<>();
+
+        Loan entityOptional = repository.findById(id).orElse(null);
+        Book book = bookRepository.findById(entityOptional.getBook().getId()).orElse(null);
+
+        entityOptional.setRetunDate(LocalDate.now());
+        book.setAvailable(true);
+        bookRepository.save(book);
+
+        repository.save(entityOptional);
+        res.add(mapper.entityToDto(entityOptional));
+
+        return res;
+    }
+
 }

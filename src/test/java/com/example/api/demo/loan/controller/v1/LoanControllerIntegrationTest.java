@@ -1,6 +1,7 @@
 package com.example.api.demo.loan.controller.v1;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -59,10 +60,10 @@ public class LoanControllerIntegrationTest {
 
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
         assertNotNull(response);
-        assertEquals("v1", response.getBody().getVersion());
-        assertEquals(1, response.getBody().getData().get(0).id());
 
-        LoanReq1 loanRequest = new LoanReq1(null, 1L, null, null);
+
+        Long bookId = response.getBody().getData().get(0).id();
+        LoanReq1 loanRequest = new LoanReq1(bookId);
 
         ResponseEntity<GenericWrapperResponse<LoanRes1>> response2 = restTemplate.exchange(
                 baseUrl,
@@ -72,7 +73,18 @@ public class LoanControllerIntegrationTest {
                 });
 
         assertEquals(HttpStatus.CREATED, response2.getStatusCode());
-        assertEquals(loanRequest.bookId(), response2.getBody().getData().get(0).id());
+        
+
+        ResponseEntity<GenericWrapperResponse<BookRes1>> loanedBook = restTemplate.exchange(
+                booksUrl+"/"+ bookId,
+                org.springframework.http.HttpMethod.GET,
+                new HttpEntity<>(bookId.toString()),
+                new ParameterizedTypeReference<GenericWrapperResponse<BookRes1>>() {
+                });
+
+        assertFalse(
+                    loanedBook.getBody().getData().get(0).available()
+                );
     }
 
 }

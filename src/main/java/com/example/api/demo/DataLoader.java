@@ -1,6 +1,5 @@
 package com.example.api.demo;
 
-import com.example.api.demo.author.AuthorRepository;
 import com.example.api.demo.book.dto.v1.BookReq1;
 import com.example.api.demo.book.service.BookService;
 
@@ -14,11 +13,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class DataLoader implements CommandLineRunner {
 
-    private final AuthorRepository authorRepository;
     private final BookService bookService;
 
-    public DataLoader(AuthorRepository authorRepository, BookService bookService) {
-        this.authorRepository = authorRepository;
+    public DataLoader(BookService bookService) {
         this.bookService = bookService;
     }
 

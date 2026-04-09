@@ -17,7 +17,7 @@ public class LoanMapper implements MapperInterface<Loan, LoanReq1, LoanRes1> {
         if (entity == null) {
             return null;
         }
-        return new LoanRes1(entity.getId(), null, entity.getLoanDate(), entity.getRetunDate());
+        return new LoanRes1(entity.getId(), entity.getBook().getId(), entity.getLoanDate(), entity.getRetunDate());
     }
 
     @Override
