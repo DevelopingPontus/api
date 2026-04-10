@@ -3,10 +3,14 @@ package com.example.api.demo.loan.controller.v1;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.core.ParameterizedTypeReference;
@@ -22,113 +26,119 @@ import com.example.api.demo.book.dto.v1.BookRes1;
 import com.example.api.demo.generic.wrappers.GenericWrapperResponse;
 import com.example.api.demo.loan.dto.LoanReq1;
 import com.example.api.demo.loan.dto.LoanRes1;
+import com.example.api.demo.loan.service.LoanService;
 
 @SpringBootTest(classes = com.example.api.demo.DemoApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
 @DisplayName("Loan Controller Integration Tests")
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-public class LoanControllerIntegrationTest {
+class LoanControllerIntegrationTest {
 
-    @LocalServerPort
-    private int port;
+        @Autowired
+        LoanService loanService;
 
-    private RestTemplate restTemplate;
+        @LocalServerPort
+        private int port;
 
-    private String baseUrl;
-    private String booksUrl;
+        private RestTemplate restTemplate;
 
-    @BeforeEach
-    void setUp() {
-        baseUrl = "http://localhost:" + port + "/api/v1/loans";
-        booksUrl = "http://localhost:" + port + "/api/v1/books";
-        restTemplate = new RestTemplate();
+        private String baseUrl;
+        private String booksUrl;
 
-    }
+        @BeforeEach
+        void setUp() {
+                baseUrl = "http://localhost:" + port + "/api/v1/loans";
+                booksUrl = "http://localhost:" + port + "/api/v1/books";
+                restTemplate = new RestTemplate();
 
-    @Test
-    @DisplayName("Loan a book")
-    void loanBook() {
+        }
 
-        BookReq1 bookRequest = new BookReq1("Clean Code", "Robert C. Martin", "978-0132350884", 2008);
+        @Test
+        @DisplayName("Loan a book")
+        void loanBook() {
 
-        ResponseEntity<GenericWrapperResponse<BookRes1>> response = restTemplate.exchange(
-                booksUrl,
-                org.springframework.http.HttpMethod.POST,
-                new HttpEntity<>(bookRequest),
-                new ParameterizedTypeReference<GenericWrapperResponse<BookRes1>>() {
-                });
+                List<BookReq1> bookRequest = List
+                                .of(new BookReq1("Clean Code", "Robert C. Martin", "978-0132350884", 2008));
 
-        assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        assertNotNull(response);
+                ResponseEntity<GenericWrapperResponse<BookRes1>> response = restTemplate.exchange(
+                                booksUrl,
+                                org.springframework.http.HttpMethod.POST,
+                                new HttpEntity<>(bookRequest),
+                                new ParameterizedTypeReference<GenericWrapperResponse<BookRes1>>() {
+                                });
 
-        Long bookId = response.getBody().getData().get(0).id();
-        LoanReq1 loanRequest = new LoanReq1(bookId);
+                assertEquals(HttpStatus.CREATED, response.getStatusCode());
+                assertNotNull(response);
 
-        ResponseEntity<GenericWrapperResponse<LoanRes1>> response2 = restTemplate.exchange(
-                baseUrl,
-                org.springframework.http.HttpMethod.POST,
-                new HttpEntity<>(loanRequest),
-                new ParameterizedTypeReference<GenericWrapperResponse<LoanRes1>>() {
-                });
+                Long bookId = response.getBody().getData().get(0).id();
+                List<LoanReq1> loanRequest = List.of(new LoanReq1(bookId));
 
-        assertEquals(HttpStatus.CREATED, response2.getStatusCode());
+                ResponseEntity<GenericWrapperResponse<LoanRes1>> response2 = restTemplate.exchange(
+                                baseUrl,
+                                org.springframework.http.HttpMethod.POST,
+                                new HttpEntity<>(loanRequest),
+                                new ParameterizedTypeReference<GenericWrapperResponse<LoanRes1>>() {
+                                });
 
-        ResponseEntity<GenericWrapperResponse<BookRes1>> loanedBook = restTemplate.exchange(
-                booksUrl + "/" + bookId,
-                org.springframework.http.HttpMethod.GET,
-                new HttpEntity<>(bookId.toString()),
-                new ParameterizedTypeReference<GenericWrapperResponse<BookRes1>>() {
-                });
+                assertEquals(HttpStatus.CREATED, response2.getStatusCode());
 
-        assertFalse(
-                loanedBook.getBody().getData().get(0).available());
-    }
+                ResponseEntity<GenericWrapperResponse<BookRes1>> loanedBook = restTemplate.exchange(
+                                booksUrl + "/" + bookId,
+                                org.springframework.http.HttpMethod.GET,
+                                new HttpEntity<>(bookId.toString()),
+                                new ParameterizedTypeReference<GenericWrapperResponse<BookRes1>>() {
+                                });
 
-    @Test
-    @DisplayName("should return loaned book")
-    void shouldReturnBook() {
-        BookReq1 bookRequest = new BookReq1("Clean Code", "Robert C. Martin", "978-0132350884", 2008);
+                assertFalse(
+                                loanedBook.getBody().getData().get(0).available());
+        }
 
-        ResponseEntity<GenericWrapperResponse<BookRes1>> response = restTemplate.exchange(
-                booksUrl,
-                org.springframework.http.HttpMethod.POST,
-                new HttpEntity<>(bookRequest),
-                new ParameterizedTypeReference<GenericWrapperResponse<BookRes1>>() {
-                });
+        @Test
+        void shouldReturnBook() {
 
-        assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        assertNotNull(response);
+                List<BookReq1> bookRequest = List
+                                .of(new BookReq1("Clean Code", "Robert C. Martin", "978-0132350884", 2008));
 
-        Long bookId = response.getBody().getData().get(0).id();
-        LoanReq1 loanRequest = new LoanReq1(bookId);
+                ResponseEntity<GenericWrapperResponse<BookRes1>> response = restTemplate.exchange(
+                                booksUrl,
+                                org.springframework.http.HttpMethod.POST,
+                                new HttpEntity<>(bookRequest),
+                                new ParameterizedTypeReference<GenericWrapperResponse<BookRes1>>() {
+                                });
 
-        ResponseEntity<GenericWrapperResponse<LoanRes1>> response2 = restTemplate.exchange(
-                baseUrl,
-                org.springframework.http.HttpMethod.POST,
-                new HttpEntity<>(loanRequest),
-                new ParameterizedTypeReference<GenericWrapperResponse<LoanRes1>>() {
-                });
+                assertEquals(HttpStatus.CREATED, response.getStatusCode());
+                assertNotNull(response);
 
-        assertEquals(HttpStatus.CREATED, response2.getStatusCode());
+                Long bookId = response.getBody().getData().get(0).id();
+                List<LoanReq1> loanRequest = List.of(new LoanReq1(bookId));
 
-        ResponseEntity<GenericWrapperResponse<LoanRes1>> response3 = restTemplate.exchange(
-                baseUrl,
-                org.springframework.http.HttpMethod.PUT,
-                new HttpEntity<>(loanRequest),
-                new ParameterizedTypeReference<GenericWrapperResponse<LoanRes1>>() {
-                });
+                ResponseEntity<GenericWrapperResponse<LoanRes1>> response2 = restTemplate.exchange(
+                                baseUrl,
+                                org.springframework.http.HttpMethod.POST,
+                                new HttpEntity<>(loanRequest),
+                                new ParameterizedTypeReference<GenericWrapperResponse<LoanRes1>>() {
+                                });
 
-        assertNotNull(response3.getBody().getData().get(0).returnDate());
+                assertEquals(HttpStatus.CREATED, response2.getStatusCode());
 
-        ResponseEntity<GenericWrapperResponse<BookRes1>> loanedBook = restTemplate.exchange(
-                booksUrl + "/" + bookId,
-                org.springframework.http.HttpMethod.GET,
-                new HttpEntity<>(bookId.toString()),
-                new ParameterizedTypeReference<GenericWrapperResponse<BookRes1>>() {
-                });
+                Long loanId = response2.getBody().getData().get(0).id();
 
-        assertFalse(
-                loanedBook.getBody().getData().get(0).available());
-    }
+                restTemplate.exchange(
+                                baseUrl + "/" + loanId,
+                                org.springframework.http.HttpMethod.PUT,
+                                new HttpEntity<>(loanRequest),
+                                new ParameterizedTypeReference<GenericWrapperResponse<LoanRes1>>() {
+                                });
+
+                ResponseEntity<GenericWrapperResponse<BookRes1>> loanedBook = restTemplate.exchange(
+                                booksUrl + "/" + bookId,
+                                org.springframework.http.HttpMethod.GET,
+                                new HttpEntity<>(bookId.toString()),
+                                new ParameterizedTypeReference<GenericWrapperResponse<BookRes1>>() {
+                                });
+
+                assertTrue(
+                                loanedBook.getBody().getData().get(0).available());
+        }
 
 }

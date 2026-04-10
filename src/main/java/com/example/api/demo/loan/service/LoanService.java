@@ -9,6 +9,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.ResourceAccessException;
 
 import com.example.api.demo.book.Book;
 import com.example.api.demo.book.repository.BookRepository;
@@ -57,21 +58,35 @@ public class LoanService extends GenericService<Loan, LoanReq1, LoanRes1> {
         return results;
     }
 
-    @Transactional
-    public List<LoanRes1> update(LoanReq1 id) {
 
+    @Override
+    public List<LoanRes1> update(Long id) {
         List<LoanRes1> res = new ArrayList<>();
 
-        Loan entityOptional = repository.findById(id.bookId()).orElse(null);
-        Book book = bookRepository.findById(entityOptional.getBook().getId()).orElse(null);
+            Optional<Loan> entityOptional = repository.findById(id);
 
-        entityOptional.setRetunDate(LocalDate.now());
-        book.setAvailable(true);
-        bookRepository.save(book);
+            if (!entityOptional.isPresent()) {
+                // Handle the case where the book is not found
+                throw new ResourceAccessException("Book with id " + id + " not found");
+            }
 
-        repository.save(entityOptional);
-        res.add(mapper.entityToDto(entityOptional));
+            Loan entity = entityOptional.get();
+            Optional<Book> bookOptional = bookRepository.findById(entity.getBook().getId());
 
+            if (!bookOptional.isPresent()) {
+                // Handle the case where the book is not found
+                throw new ResourceAccessException("Book with id " + entity.getBook().getId() + " not found");
+            }
+
+            Book book = bookOptional.get();
+            book.setAvailable(true);
+            bookRepository.save(book);
+
+            entity.setRetunDate(LocalDate.now());
+            repository.save(entity);
+
+            res.add(mapper.entityToDto(entity));
+        
         return res;
     }
 

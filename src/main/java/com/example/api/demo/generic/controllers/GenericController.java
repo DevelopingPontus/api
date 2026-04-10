@@ -48,7 +48,7 @@ public abstract class GenericController<T extends EntityInterface, ReqDto, ResDt
     @Parameter(name = "id", required = true, description = "ID of the entity to retrieve")
     @ApiResponse(responseCode = "200", description = "Successfully retrieved the entity")
     @ApiResponse(responseCode = "404", description = "Entity not found")
-    @GetMapping("/{id}")
+    @GetMapping("{id}")
 
     public ResponseEntity<GenericWrapperResponse<ResDto>> getById(@PathVariable Long id) {
         ResDto entity = service.getById(id);
@@ -73,11 +73,23 @@ public abstract class GenericController<T extends EntityInterface, ReqDto, ResDt
     @Operation(summary = "Delete an entity by ID", description = "Delete an entity by its ID")
     @Parameter(name = "id", required = true, description = "ID of the entity to delete")
     @ApiResponse(responseCode = "204", description = "Entity deleted successfully")
-    @DeleteMapping("/{id}")
+    @DeleteMapping("{id}")
 
     public ResponseEntity<Void> deleteById(@PathVariable Long id) {
         service.deleteById(id);
         return ResponseEntity.noContent().build();
+    }
+
+
+    @Operation(summary = "Only works on Loan")
+    @Parameter(name = "id", required = true, description = "ID of the entity to update")
+    @ApiResponse(responseCode = "204", description = "Entity updated successfully")
+    @PutMapping("{id}")
+
+    public ResponseEntity<GenericWrapperResponse<ResDto>> update(@PathVariable Long id) {
+        List<ResDto> updatedDtos = service.update(id);
+        GenericWrapperResponse<ResDto> wrapperResponse = new GenericWrapperResponse<>(updatedDtos, version);
+        return ResponseEntity.status(204).body(wrapperResponse);
     }
 
     

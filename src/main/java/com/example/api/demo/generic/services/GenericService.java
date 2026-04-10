@@ -43,4 +43,8 @@ public abstract class GenericService<T extends EntityInterface, ReqDto, ResDto> 
         repository.deleteById(id);
     }
 
+    public List<ResDto> update(Long id) {
+        List<T> entities = List.of(repository.findById(id).orElseThrow());
+        return mapper.entityListToDtoList(entities);
+    }
 }

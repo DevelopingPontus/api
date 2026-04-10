@@ -3,6 +3,8 @@ package com.example.api.demo.author.controller.v1;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+import java.util.List;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -40,12 +42,13 @@ public class AuthorControllerIntegrationTest {
                 baseUrl = "http://localhost:" + port + "/api/v1/authors";
                 booksUrl = "http://localhost:" + port + "/api/v1/books";
                 restTemplate = new RestTemplate();
+                
         }
 
         @Test
         @DisplayName("Should create Author when Book is created")
         void shouldCreateAuthorWhenBookIsCreated() {
-                BookReq1 bookRequest = new BookReq1("Clean Code", "Robert C. Martin", "978-0132350884", 2008);
+                List<BookReq1> bookRequest =List.of( new BookReq1("Clean Code", "Robert C. Martin", "978-0132350884", 2008));
 
                 ResponseEntity<GenericWrapperResponse<BookRes1>> response = restTemplate.exchange(
                                 booksUrl,
@@ -75,7 +78,8 @@ public class AuthorControllerIntegrationTest {
         @Test
         @DisplayName("Should create Author when Book is created")
         void shouldBeRelatedWhenCreated() {
-                BookReq1 bookRequest = new BookReq1("Clean Code", "Robert C. Martin", "978-0132350884", 2008);
+                List<BookReq1> bookRequest = List
+                                .of(new BookReq1("Clean Code", "Robert C. Martin", "978-0132350884", 2008));
 
                 ResponseEntity<GenericWrapperResponse<BookRes1>> response = restTemplate.exchange(
                                 booksUrl,
