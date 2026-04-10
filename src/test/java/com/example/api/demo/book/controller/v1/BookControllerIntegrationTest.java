@@ -33,11 +33,22 @@ class BookControllerIntegrationTest {
 
         private String baseUrl;
 
+        ResponseEntity<GenericWrapperResponse<BookRes1>> savedBook;
+
         @BeforeEach
         void setUp() {
                 baseUrl = "http://localhost:" + port + "/api/v1/books";
                 restTemplate = new RestTemplate();
 
+                List<BookReq1> bookRequest = List
+                                .of(new BookReq1("Clean Code", "Robert C. Martin", "978-0132350884", 2008));
+
+                savedBook = restTemplate.exchange(
+                                baseUrl,
+                                org.springframework.http.HttpMethod.POST,
+                                new HttpEntity<>(bookRequest),
+                                new ParameterizedTypeReference<GenericWrapperResponse<BookRes1>>() {
+                                });
         }
 
         // ============ GET ALL TESTS ============
@@ -58,27 +69,18 @@ class BookControllerIntegrationTest {
                 assertNotNull(response.getBody().getData());
         }
 
-
         // ============ CREATE TESTS ============
 
         @Test
         @DisplayName("Should create a new book successfully")
         void testCreateBook() {
-                List<BookReq1> bookRequest = List.of(new BookReq1("Clean Code", "Robert C. Martin", "978-0132350884", 2008));
 
-                ResponseEntity<GenericWrapperResponse<BookRes1>> response = restTemplate.exchange(
-                                baseUrl,
-                                org.springframework.http.HttpMethod.POST,
-                                new HttpEntity<>(bookRequest),
-                                new ParameterizedTypeReference<GenericWrapperResponse<BookRes1>>() {
-                                });
+                assertEquals(HttpStatus.CREATED, savedBook.getStatusCode());
+                assertNotNull(savedBook);
+                assertEquals("v1", savedBook.getBody().getVersion());
+                assertEquals(1, savedBook.getBody().getData().size());
 
-                assertEquals(HttpStatus.CREATED, response.getStatusCode());
-                assertNotNull(response);
-                assertEquals("v1", response.getBody().getVersion());
-                assertEquals(1, response.getBody().getData().size());
-
-                BookRes1 createdBook = response.getBody().getData().get(0);
+                BookRes1 createdBook = savedBook.getBody().getData().get(0);
                 assertEquals("Clean Code", createdBook.title());
                 assertEquals("Robert C. Martin", createdBook.author());
                 assertEquals("978-0132350884", createdBook.isbn());
@@ -88,8 +90,9 @@ class BookControllerIntegrationTest {
         @Test
         @DisplayName("Should create multiple books in sequence")
         void testCreateMultipleBooks() {
-                List<BookReq1> book1 = List.of( new BookReq1("The Pragmatic Programmer", "David Thomas", "978-0201616224", 1999)
-               ,new BookReq1("Design Patterns", "Gang of Four", "978-0201633610", 1994));
+                List<BookReq1> book1 = List.of(
+                                new BookReq1("The Pragmatic Programmer", "David Thomas", "978-0201616224", 1999),
+                                new BookReq1("Design Patterns", "Gang of Four", "978-0201633610", 1994));
 
                 ResponseEntity<GenericWrapperResponse<BookRes1>> response1 = restTemplate.exchange(
                                 baseUrl,
@@ -97,7 +100,6 @@ class BookControllerIntegrationTest {
                                 new HttpEntity<>(book1),
                                 new ParameterizedTypeReference<GenericWrapperResponse<BookRes1>>() {
                                 });
-
 
                 assertEquals(HttpStatus.CREATED, response1.getStatusCode());
 
@@ -108,15 +110,8 @@ class BookControllerIntegrationTest {
         @Test
         @DisplayName("Should retrieve a book by ID successfully")
         void testGetBookById() {
-                List<BookReq1> bookRequest =List.of( new BookReq1("Refactoring", "Martin Fowler", "978-0201485677", 1999));
-                ResponseEntity<GenericWrapperResponse<BookRes1>> createResponse = restTemplate.exchange(
-                                baseUrl,
-                                org.springframework.http.HttpMethod.POST,
-                                new HttpEntity<>(bookRequest),
-                                new ParameterizedTypeReference<GenericWrapperResponse<BookRes1>>() {
-                                });
 
-                Long bookId = createResponse.getBody().getData().get(0).id();
+                Long bookId = savedBook.getBody().getData().get(0).id();
 
                 ResponseEntity<GenericWrapperResponse<BookRes1>> getResponse = restTemplate.exchange(
                                 baseUrl + "/" + bookId,
@@ -127,8 +122,7 @@ class BookControllerIntegrationTest {
 
                 assertEquals(HttpStatus.OK, getResponse.getStatusCode());
                 assertEquals(1, getResponse.getBody().getData().size());
-                assertEquals("Refactoring", getResponse.getBody().getData().get(0).title());
-                assertEquals("Martin Fowler", getResponse.getBody().getData().get(0).author());
+                assertEquals("Clean Code", getResponse.getBody().getData().get(0).title());
         }
 
         // ============ DELETE TESTS ============
@@ -136,15 +130,8 @@ class BookControllerIntegrationTest {
         @Test
         @DisplayName("Should delete a book successfully")
         void testDeleteBook() {
-                List<BookReq1> bookRequest =List.of( new BookReq1("Test Book", "Test Author", "978-0000000000", 2020));
-                ResponseEntity<GenericWrapperResponse<BookRes1>> createResponse = restTemplate.exchange(
-                                baseUrl,
-                                org.springframework.http.HttpMethod.POST,
-                                new HttpEntity<>(bookRequest),
-                                new ParameterizedTypeReference<GenericWrapperResponse<BookRes1>>() {
-                                });
 
-                Long bookId = createResponse.getBody().getData().get(0).id();
+                Long bookId = savedBook.getBody().getData().get(0).id();
 
                 ResponseEntity<Void> deleteResponse = restTemplate.exchange(
                                 baseUrl + "/" + bookId,

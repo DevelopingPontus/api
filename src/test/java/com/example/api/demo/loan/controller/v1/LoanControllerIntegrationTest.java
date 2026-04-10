@@ -45,32 +45,34 @@ class LoanControllerIntegrationTest {
         private String baseUrl;
         private String booksUrl;
 
+
+        ResponseEntity<GenericWrapperResponse<BookRes1>> savedBook;
+
         @BeforeEach
         void setUp() {
                 baseUrl = "http://localhost:" + port + "/api/v1/loans";
                 booksUrl = "http://localhost:" + port + "/api/v1/books";
                 restTemplate = new RestTemplate();
 
+
+                List<BookReq1> bookRequest = List
+                                .of(new BookReq1("Clean Code", "Robert C. Martin", "978-0132350884", 2008));
+
+                savedBook = restTemplate.exchange(
+                                booksUrl,
+                                org.springframework.http.HttpMethod.POST,
+                                new HttpEntity<>(bookRequest),
+                                new ParameterizedTypeReference<GenericWrapperResponse<BookRes1>>() {
+                                });
         }
 
         @Test
         @DisplayName("Loan a book")
         void loanBook() {
 
-                List<BookReq1> bookRequest = List
-                                .of(new BookReq1("Clean Code", "Robert C. Martin", "978-0132350884", 2008));
+                assertEquals(HttpStatus.CREATED, savedBook.getStatusCode());
 
-                ResponseEntity<GenericWrapperResponse<BookRes1>> response = restTemplate.exchange(
-                                booksUrl,
-                                org.springframework.http.HttpMethod.POST,
-                                new HttpEntity<>(bookRequest),
-                                new ParameterizedTypeReference<GenericWrapperResponse<BookRes1>>() {
-                                });
-
-                assertEquals(HttpStatus.CREATED, response.getStatusCode());
-                assertNotNull(response);
-
-                Long bookId = response.getBody().getData().get(0).id();
+                Long bookId = savedBook.getBody().getData().get(0).id();
                 List<LoanReq1> loanRequest = List.of(new LoanReq1(bookId));
 
                 ResponseEntity<GenericWrapperResponse<LoanRes1>> response2 = restTemplate.exchange(
@@ -96,20 +98,9 @@ class LoanControllerIntegrationTest {
         @Test
         void shouldReturnBook() {
 
-                List<BookReq1> bookRequest = List
-                                .of(new BookReq1("Clean Code", "Robert C. Martin", "978-0132350884", 2008));
+                assertEquals(HttpStatus.CREATED, savedBook.getStatusCode());
 
-                ResponseEntity<GenericWrapperResponse<BookRes1>> response = restTemplate.exchange(
-                                booksUrl,
-                                org.springframework.http.HttpMethod.POST,
-                                new HttpEntity<>(bookRequest),
-                                new ParameterizedTypeReference<GenericWrapperResponse<BookRes1>>() {
-                                });
-
-                assertEquals(HttpStatus.CREATED, response.getStatusCode());
-                assertNotNull(response);
-
-                Long bookId = response.getBody().getData().get(0).id();
+                Long bookId = savedBook.getBody().getData().get(0).id();
                 List<LoanReq1> loanRequest = List.of(new LoanReq1(bookId));
 
                 ResponseEntity<GenericWrapperResponse<LoanRes1>> response2 = restTemplate.exchange(
