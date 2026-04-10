@@ -58,11 +58,11 @@ public class LoanService extends GenericService<Loan, LoanReq1, LoanRes1> {
     }
 
     @Transactional
-    public List<LoanRes1> update(Long id) {
+    public List<LoanRes1> update(LoanReq1 id) {
 
         List<LoanRes1> res = new ArrayList<>();
 
-        Loan entityOptional = repository.findById(id).orElse(null);
+        Loan entityOptional = repository.findById(id.bookId()).orElse(null);
         Book book = bookRepository.findById(entityOptional.getBook().getId()).orElse(null);
 
         entityOptional.setRetunDate(LocalDate.now());

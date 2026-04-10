@@ -34,7 +34,7 @@ public class LoanController extends GenericController<Loan, LoanReq1, LoanRes1> 
 
     @PutMapping("/{id}")
 
-    public ResponseEntity<GenericWrapperResponse<LoanRes1>> returnLoan(@PathVariable Long id) {
+    public ResponseEntity<GenericWrapperResponse<LoanRes1>> returnLoan(@RequestBody @PathVariable LoanReq1 id) {
         List<LoanRes1> updatedDto = loanService.update(id);
         GenericWrapperResponse<LoanRes1> wrapperResponse = new GenericWrapperResponse<>(updatedDto, version);
         return ResponseEntity.status(201).body(wrapperResponse);
