@@ -1,14 +1,13 @@
 package com.example.api.demo;
 
-import com.example.api.demo.book.dto.v1.BookReq1;
-import com.example.api.demo.book.service.BookService;
+import com.example.api.demo.features.book.dto.BookReq1;
+import com.example.api.demo.features.book.service.BookService;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
-
 
 @Component
 public class DataLoader implements CommandLineRunner {
