@@ -7,7 +7,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder.MethodArgumentBuilder;
 
 // Spring
 @ControllerAdvice
@@ -15,8 +14,8 @@ public class GlobalExceptionHandler {
 
     // Spring
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<String> handleMethodArgumentNotValidException(MethodArgumentBuilder ex) {
-        return new ResponseEntity<>("Invalid request parameters", HttpStatus.BAD_REQUEST);
+    public ResponseEntity<String> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
+        return new ResponseEntity<>("Invalid request parameters: " + ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
     // Spring
@@ -28,7 +27,7 @@ public class GlobalExceptionHandler {
     // Spring
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> handleGeneralException(Exception ex) {
-        return new ResponseEntity<>("Jikes error", HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>("An error occurred: " + ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
 }

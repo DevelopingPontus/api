@@ -17,7 +17,9 @@ public class Book implements EntityInterface {
     private Author author;
     private String isbn;
     private int publishedYear;
-    private boolean available;
+
+    @OneToOne(mappedBy = "book", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private BookAvailability availability;
 
     @OneToOne(mappedBy = "book")
     private Loan loan;
@@ -31,7 +33,6 @@ public class Book implements EntityInterface {
         this.title = title;
         this.isbn = isbn;
         this.publishedYear = publishedYear;
-        this.available = true;
     }
 
     @Override
@@ -77,11 +78,23 @@ public class Book implements EntityInterface {
     }
 
     public boolean isAvailable() {
-        return available;
+        return availability != null && availability.isAvailable();
     }
 
     public void setAvailable(boolean available) {
-        this.available = available;
+        if (this.availability == null) {
+            this.availability = new BookAvailability(this, available);
+        } else {
+            this.availability.setAvailable(available);
+        }
+    }
+
+    public BookAvailability getAvailability() {
+        return availability;
+    }
+
+    public void setAvailability(BookAvailability availability) {
+        this.availability = availability;
     }
 
     public Loan getLoan() {

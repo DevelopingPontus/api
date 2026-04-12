@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.example.api.demo.features.author.entity.Author;
 import com.example.api.demo.features.author.repository.AuthorRepository;
 import com.example.api.demo.features.book.entity.Book;
+import com.example.api.demo.features.book.entity.BookAvailability;
 import com.example.api.demo.features.book.dto.BookReq1;
 import com.example.api.demo.features.book.dto.BookRes1;
 import com.example.api.demo.features.book.mapper.BookMapper;
@@ -18,11 +19,14 @@ import com.example.api.demo.common.services.GenericService;
 @Service
 public class BookService extends GenericService<Book, BookReq1, BookRes1> {
     private final AuthorRepository authorRepository;
+    private final BookAvailabilityService bookAvailabilityService;
 
     @Autowired
-    public BookService(BookRepository repository, BookMapper mapper, AuthorRepository authorRepository) {
+    public BookService(BookRepository repository, BookMapper mapper, AuthorRepository authorRepository,
+            BookAvailabilityService bookAvailabilityService) {
         super(repository, mapper);
         this.authorRepository = authorRepository;
+        this.bookAvailabilityService = bookAvailabilityService;
     }
 
     @Override
@@ -39,8 +43,21 @@ public class BookService extends GenericService<Book, BookReq1, BookRes1> {
             Book book = mapper.dtoToEntity(bookReq1);
             book.setAuthor(author);
             repository.save(book);
+
+            // Create availability record for split caching
+            BookAvailability availability = new BookAvailability(book, bookReq1.available());
+            bookAvailabilityService.updateAvailability(availability);
+            book.setAvailability(availability);
+
             books.add(book);
         }
         return mapper.entityListToDtoList(books);
+    }
+
+    /**
+     * Update book availability with cache refresh
+     */
+    public void updateBookAvailability(Long bookId, boolean available) {
+        bookAvailabilityService.updateAvailabilityStatus(bookId, available);
     }
 }

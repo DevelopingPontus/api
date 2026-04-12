@@ -2,7 +2,6 @@ package com.example.api.demo.features.loan.controller;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
@@ -54,7 +53,7 @@ class LoanControllerIntegrationTest {
                 restTemplate = new RestTemplate();
 
                 List<BookReq1> bookRequest = List
-                                .of(new BookReq1("Clean Code", "Robert C. Martin", "978-0132350884", 2008));
+                                .of(new BookReq1("Clean Code", "Robert C. Martin", "978-0132350884", 2008, true));
 
                 savedBook = restTemplate.exchange(
                                 booksUrl,
@@ -128,6 +127,113 @@ class LoanControllerIntegrationTest {
 
                 assertTrue(
                                 loanedBook.getBody().getData().get(0).available());
+        }
+
+        @Test
+        @DisplayName("Should prevent lending same book multiple times")
+        void testPreventMultipleLendingOfSameBook() {
+                assertEquals(HttpStatus.CREATED, savedBook.getStatusCode());
+
+                Long bookId = savedBook.getBody().getData().get(0).id();
+                List<LoanReq1> loanRequest = List.of(new LoanReq1(bookId));
+
+                // First loan should succeed
+                ResponseEntity<GenericWrapperResponse<LoanRes1>> firstLoan = restTemplate.exchange(
+                                baseUrl,
+                                org.springframework.http.HttpMethod.POST,
+                                new HttpEntity<>(loanRequest),
+                                new ParameterizedTypeReference<GenericWrapperResponse<LoanRes1>>() {
+                                });
+                assertEquals(HttpStatus.CREATED, firstLoan.getStatusCode());
+
+                // Verify book is unavailable
+                ResponseEntity<GenericWrapperResponse<BookRes1>> bookAfterFirstLoan = restTemplate.exchange(
+                                booksUrl + "/" + bookId,
+                                org.springframework.http.HttpMethod.GET,
+                                null,
+                                new ParameterizedTypeReference<GenericWrapperResponse<BookRes1>>() {
+                                });
+                assertFalse(bookAfterFirstLoan.getBody().getData().get(0).available(),
+                                "Book should be unavailable after first loan");
+        }
+
+        @Test
+        @DisplayName("Should restore availability after returning loaned book")
+        void testRestoreAvailabilityAfterReturn() {
+                assertEquals(HttpStatus.CREATED, savedBook.getStatusCode());
+
+                Long bookId = savedBook.getBody().getData().get(0).id();
+                List<LoanReq1> loanRequest = List.of(new LoanReq1(bookId));
+
+                // Create loan
+                ResponseEntity<GenericWrapperResponse<LoanRes1>> loanResponse = restTemplate.exchange(
+                                baseUrl,
+                                org.springframework.http.HttpMethod.POST,
+                                new HttpEntity<>(loanRequest),
+                                new ParameterizedTypeReference<GenericWrapperResponse<LoanRes1>>() {
+                                });
+                assertEquals(HttpStatus.CREATED, loanResponse.getStatusCode());
+                Long loanId = loanResponse.getBody().getData().get(0).id();
+
+                // Verify book is unavailable
+                ResponseEntity<GenericWrapperResponse<BookRes1>> unavailableBook = restTemplate.exchange(
+                                booksUrl + "/" + bookId,
+                                org.springframework.http.HttpMethod.GET,
+                                null,
+                                new ParameterizedTypeReference<GenericWrapperResponse<BookRes1>>() {
+                                });
+                assertFalse(unavailableBook.getBody().getData().get(0).available(),
+                                "Book should be unavailable after loan");
+
+                // Return the book
+                restTemplate.exchange(
+                                baseUrl + "/" + loanId,
+                                org.springframework.http.HttpMethod.PUT,
+                                new HttpEntity<>(loanRequest),
+                                new ParameterizedTypeReference<GenericWrapperResponse<LoanRes1>>() {
+                                });
+
+                // Verify book is available again
+                ResponseEntity<GenericWrapperResponse<BookRes1>> availableBook = restTemplate.exchange(
+                                booksUrl + "/" + bookId,
+                                org.springframework.http.HttpMethod.GET,
+                                null,
+                                new ParameterizedTypeReference<GenericWrapperResponse<BookRes1>>() {
+                                });
+                assertTrue(availableBook.getBody().getData().get(0).available(),
+                                "Book should be available after return");
+        }
+
+        @Test
+        @DisplayName("Should retrieve all loans")
+        void testGetAllLoans() {
+                assertEquals(HttpStatus.CREATED, savedBook.getStatusCode());
+
+                Long bookId = savedBook.getBody().getData().get(0).id();
+                List<LoanReq1> loanRequest = List.of(new LoanReq1(bookId));
+
+                // Create loan
+                ResponseEntity<GenericWrapperResponse<LoanRes1>> loanResponse = restTemplate.exchange(
+                                baseUrl,
+                                org.springframework.http.HttpMethod.POST,
+                                new HttpEntity<>(loanRequest),
+                                new ParameterizedTypeReference<GenericWrapperResponse<LoanRes1>>() {
+                                });
+                assertEquals(HttpStatus.CREATED, loanResponse.getStatusCode());
+
+                // Get all loans
+                ResponseEntity<GenericWrapperResponse<LoanRes1>> allLoans = restTemplate.exchange(
+                                baseUrl,
+                                org.springframework.http.HttpMethod.GET,
+                                null,
+                                new ParameterizedTypeReference<GenericWrapperResponse<LoanRes1>>() {
+                                });
+
+                assertEquals(HttpStatus.OK, allLoans.getStatusCode());
+                assertTrue(allLoans.getBody().getData().size() > 0, "Should have at least one loan");
+                assertTrue(allLoans.getBody().getData().stream()
+                                .anyMatch(loan -> loan.bookId().equals(bookId)),
+                                "Loaned book should appear in loans list");
         }
 
 }

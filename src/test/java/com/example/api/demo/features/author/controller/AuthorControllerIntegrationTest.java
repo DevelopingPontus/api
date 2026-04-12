@@ -2,6 +2,7 @@ package com.example.api.demo.features.author.controller;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
@@ -46,7 +47,7 @@ class AuthorControllerIntegrationTest {
                 restTemplate = new RestTemplate();
 
                 List<BookReq1> bookRequest = List
-                                .of(new BookReq1("Clean Code", "Robert C. Martin", "978-0132350884", 2008));
+                                .of(new BookReq1("Clean Code", "Robert C. Martin", "978-0132350884", 2008, true));
 
                 savedBook = restTemplate.exchange(
                                 booksUrl,
@@ -76,4 +77,53 @@ class AuthorControllerIntegrationTest {
 
         }
 
+        @Test
+        @DisplayName("Should retrieve all authors successfully")
+        void testGetAllAuthors() {
+                ResponseEntity<GenericWrapperResponse<AuthorRes1>> response = restTemplate.exchange(
+                                baseUrl,
+                                org.springframework.http.HttpMethod.GET,
+                                null,
+                                new ParameterizedTypeReference<GenericWrapperResponse<AuthorRes1>>() {
+                                });
+
+                assertEquals(HttpStatus.OK, response.getStatusCode());
+                assertNotNull(response.getBody());
+                assertEquals("v1", response.getBody().getVersion());
+                assertTrue(response.getBody().getData().size() > 0, "Should have at least one author");
+        }
+
+        @Test
+        @DisplayName("Should retrieve author with associated books")
+        void testGetAuthorWithBooks() {
+                ResponseEntity<GenericWrapperResponse<AuthorRes1>> response = restTemplate.exchange(
+                                baseUrl,
+                                org.springframework.http.HttpMethod.GET,
+                                null,
+                                new ParameterizedTypeReference<GenericWrapperResponse<AuthorRes1>>() {
+                                });
+
+                assertEquals(HttpStatus.OK, response.getStatusCode());
+                AuthorRes1 author = response.getBody().getData().getLast();
+                assertNotNull(author.name());
+                assertNotNull(author.books());
+                assertTrue(author.books().size() > 0, "Author should have associated books");
+        }
+
+        @Test
+        @DisplayName("Should verify book availability is included in author response")
+        void testAuthorResponseIncludesBookAvailability() {
+                ResponseEntity<GenericWrapperResponse<AuthorRes1>> response = restTemplate.exchange(
+                                baseUrl,
+                                org.springframework.http.HttpMethod.GET,
+                                null,
+                                new ParameterizedTypeReference<GenericWrapperResponse<AuthorRes1>>() {
+                                });
+
+                assertEquals(HttpStatus.OK, response.getStatusCode());
+                AuthorRes1 author = response.getBody().getData().getLast();
+                BookRes1 book = author.books().get(0);
+
+                assertTrue(book.available(), "Book should be available (created with availability=true)");
+        }
 }

@@ -29,13 +29,13 @@ public class DataLoader implements CommandLineRunner {
 
     private void seedBooks() {
 
-        // Seed a book by George Orwell
+        // Seed books with availability
         List<BookReq1> books = new ArrayList<>();
-        BookReq1 book1 = new BookReq1("Animal Farm", "George Orwell", "12200", 1945);
+        BookReq1 book1 = new BookReq1("Animal Farm", "George Orwell", "12200", 1945, true);
         books.add(book1);
-        BookReq1 book2 = new BookReq1("1984", "George Orwell", "12300", 1949);
+        BookReq1 book2 = new BookReq1("1984", "George Orwell", "12300", 1949, true);
         books.add(book2);
-        BookReq1 book3 = new BookReq1("Brave New World", "Aldous Huxley", "12500", 1932);
+        BookReq1 book3 = new BookReq1("Brave New World", "Aldous Huxley", "12500", 1932, false);
         books.add(book3);
 
         bookService.save(books);

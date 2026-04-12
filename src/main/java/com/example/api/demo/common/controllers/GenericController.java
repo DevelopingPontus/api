@@ -80,15 +80,15 @@ public abstract class GenericController<T extends EntityInterface, ReqDto, ResDt
         return ResponseEntity.noContent().build();
     }
 
-    @Operation(summary = "Only works on Loan")
+    @Operation(summary = "Update an entity by ID", description = "Update an entity by its ID. Only implemented for Loan entities.")
     @Parameter(name = "id", required = true, description = "ID of the entity to update")
-    @ApiResponse(responseCode = "204", description = "Entity updated successfully")
+    @ApiResponse(responseCode = "200", description = "Entity updated successfully")
     @PutMapping("{id}")
 
     public ResponseEntity<GenericWrapperResponse<ResDto>> update(@PathVariable Long id) {
         List<ResDto> updatedDtos = service.update(id);
         GenericWrapperResponse<ResDto> wrapperResponse = new GenericWrapperResponse<>(updatedDtos, version);
-        return ResponseEntity.status(204).body(wrapperResponse);
+        return ResponseEntity.ok(wrapperResponse);
     }
 
 }
