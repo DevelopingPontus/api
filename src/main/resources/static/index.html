@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Book & Loan Management System</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>📚 Book & Loan Management System</h1>
+        <p class="subtitle">Manage your books and track loans</p>
+      </header>
+
+      <nav class="nav-tabs">
+        <button class="tab-button active" data-tab="books">Books</button>
+        <button class="tab-button" data-tab="loans">Loans</button>
+        <button class="tab-button" data-tab="authors">Authors</button>
+      </nav>
+
+      <!-- Books Tab -->
+      <div id="books" class="tab-content active">
+        <div class="section">
+          <h2>Add New Book</h2>
+          <form id="bookForm" class="form-grid">
+            <div class="form-group">
+              <label for="bookTitle">Title:</label>
+              <input
+                type="text"
+                id="bookTitle"
+                placeholder="Enter book title"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label for="bookAuthor">Author:</label>
+              <input
+                type="text"
+                id="bookAuthor"
+                placeholder="Enter author name"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label for="bookISBN">ISBN:</label>
+              <input
+                type="text"
+                id="bookISBN"
+                placeholder="Enter ISBN"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label for="bookYear">Published Year:</label>
+              <input
+                type="number"
+                id="bookYear"
+                min="1900"
+                max="2099"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label for="bookAvailable">Available:</label>
+              <select id="bookAvailable">
+                <option value="true">Yes</option>
+                <option value="false">No</option>
+              </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Add Book</button>
+          </form>
+          <div id="bookFormMessage" class="message"></div>
+        </div>
+
+        <div class="section">
+          <h2>All Books</h2>
+          <div class="controls">
+            <input
+              type="text"
+              id="bookSearch"
+              placeholder="Search books..."
+              class="search-box"
+            />
+            <button id="refreshBooks" class="btn btn-secondary">
+              🔄 Refresh
+            </button>
+          </div>
+          <div id="booksList" class="books-grid"></div>
+        </div>
+      </div>
+
+      <!-- Loans Tab -->
+      <div id="loans" class="tab-content">
+        <div class="section">
+          <h2>Create New Loan</h2>
+          <form id="loanForm" class="form-grid">
+            <div class="form-group">
+              <label for="loanBookId">Book ID:</label>
+              <select id="loanBookId" required>
+                <option value="">Select a book...</option>
+              </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Create Loan</button>
+          </form>
+          <div id="loanFormMessage" class="message"></div>
+        </div>
+
+        <div class="section">
+          <h2>Active Loans</h2>
+          <div class="controls">
+            <button id="refreshLoans" class="btn btn-secondary">
+              🔄 Refresh
+            </button>
+          </div>
+          <div id="loansList" class="loans-list"></div>
+        </div>
+      </div>
+
+      <!-- Authors Tab -->
+      <div id="authors" class="tab-content">
+        <div class="section">
+          <h2>All Authors</h2>
+          <div class="controls">
+            <button id="refreshAuthors" class="btn btn-secondary">
+              🔄 Refresh
+            </button>
+          </div>
+          <div id="authorsList" class="authors-grid"></div>
+        </div>
+      </div>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
