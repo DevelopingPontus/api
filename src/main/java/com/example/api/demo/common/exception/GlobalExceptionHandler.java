@@ -9,32 +9,35 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-
-// Spring
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    // Spring
+    // Validation
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<String> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
         return new ResponseEntity<>("Invalid request parameters: " + ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
-    // Spring
+    // URI
     @ExceptionHandler(URISyntaxException.class)
     public ResponseEntity<String> handleURISyntaxException(URISyntaxException ex) {
         return new ResponseEntity<>("URI syntax error", HttpStatus.BAD_REQUEST);
     }
 
-    // Spring
+    // Book not available - 400 Bad Request
+    @ExceptionHandler(BookAvailabilityException.class)
+    public ResponseEntity<String> handleBookNotAvailable(BookAvailabilityException ex) {
+        return new ResponseEntity<>("Book is not available for loan: " + ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    // General Exception
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> handleGeneralException(Exception ex) {
         return new ResponseEntity<>("An error occurred: " + ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-
     @ExceptionHandler(NoSuchElementException.class)
-    public ResponseEntity<String> handleEntityNotFoundException(NoSuchElementException ex){
+    public ResponseEntity<String> handleEntityNotFoundException(NoSuchElementException ex) {
         return new ResponseEntity<>("Entity not found: " + ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 

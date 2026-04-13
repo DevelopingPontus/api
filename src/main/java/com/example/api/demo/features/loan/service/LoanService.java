@@ -1,10 +1,8 @@
 package com.example.api.demo.features.loan.service;
 
-import java.lang.reflect.Field;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +12,7 @@ import org.springframework.web.client.ResourceAccessException;
 import com.example.api.demo.features.book.entity.Book;
 import com.example.api.demo.features.book.repository.BookRepository;
 import com.example.api.demo.features.book.service.BookAvailabilityService;
+import com.example.api.demo.common.exception.BookAvailabilityException;
 import com.example.api.demo.common.services.GenericService;
 import com.example.api.demo.features.loan.entity.Loan;
 import com.example.api.demo.features.loan.dto.LoanReq1;
@@ -43,8 +42,12 @@ public class LoanService extends GenericService<Loan, LoanReq1, LoanRes1> {
 
         for (LoanReq1 loanReq : loanReq1) {
             Optional<Book> bookOpt = bookRepository.findById(loanReq.bookId());
-            if (bookOpt.isEmpty() || !bookOpt.get().isAvailable()) {
+            if (bookOpt.isEmpty()) {
                 continue; // Skip invalid loans
+            }
+            if (!bookOpt.get().isAvailable()) {
+                Long bookId = bookOpt.get().getId();
+                throw new BookAvailabilityException("Book with id " + bookId + " is not available");
             }
 
             Book book = bookOpt.get();

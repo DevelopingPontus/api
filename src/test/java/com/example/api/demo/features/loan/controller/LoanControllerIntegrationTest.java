@@ -2,6 +2,7 @@ package com.example.api.demo.features.loan.controller;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
@@ -167,6 +168,7 @@ class LoanControllerIntegrationTest {
                                 });
                 assertFalse(bookAfterFirstLoan.getBody().getData().get(0).available(),
                                 "Book should be unavailable after first loan");
+
         }
 
         @Test
