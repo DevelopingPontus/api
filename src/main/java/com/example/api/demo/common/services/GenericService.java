@@ -8,10 +8,7 @@ import com.example.api.demo.common.interfaces.MapperInterface;
 
 import jakarta.persistence.MappedSuperclass;
 
-import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @MappedSuperclass
 public abstract class GenericService<T extends EntityInterface, ReqDto, ResDto> {

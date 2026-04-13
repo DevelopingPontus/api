@@ -51,6 +51,18 @@ class LoanControllerIntegrationTest {
                 baseUrl = "http://localhost:" + port + "/api/v1/loans";
                 booksUrl = "http://localhost:" + port + "/api/v1/books";
                 restTemplate = new RestTemplate();
+                // Configure RestTemplate to not throw on 4xx/5xx responses
+                restTemplate.setErrorHandler(new org.springframework.web.client.ResponseErrorHandler() {
+                        public boolean hasError(org.springframework.http.client.ClientHttpResponse response)
+                                        throws java.io.IOException {
+                                return false; // Don't treat any response as an error
+                        }
+
+                        public void handleError(org.springframework.http.client.ClientHttpResponse response)
+                                        throws java.io.IOException {
+                                // Do nothing
+                        }
+                });
 
                 List<BookReq1> bookRequest = List
                                 .of(new BookReq1("Clean Code", "Robert C. Martin", "978-0132350884", 2008, true));
@@ -234,6 +246,21 @@ class LoanControllerIntegrationTest {
                 assertTrue(allLoans.getBody().getData().stream()
                                 .anyMatch(loan -> loan.bookId().equals(bookId)),
                                 "Loaned book should appear in loans list");
+        }
+
+        @Test
+        @DisplayName("Should return 404 when getting non-existent loan")
+        void testGetNonExistentLoan() {
+                Long nonExistentId = 99999L;
+
+                ResponseEntity<GenericWrapperResponse<LoanRes1>> response = restTemplate.exchange(
+                                baseUrl + "/" + nonExistentId,
+                                org.springframework.http.HttpMethod.GET,
+                                null,
+                                new ParameterizedTypeReference<GenericWrapperResponse<LoanRes1>>() {
+                                });
+
+                assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
         }
 
 }

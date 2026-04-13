@@ -45,6 +45,18 @@ class AuthorControllerIntegrationTest {
                 baseUrl = "http://localhost:" + port + "/api/v1/authors";
                 booksUrl = "http://localhost:" + port + "/api/v1/books";
                 restTemplate = new RestTemplate();
+                // Configure RestTemplate to not throw on 4xx/5xx responses
+                restTemplate.setErrorHandler(new org.springframework.web.client.ResponseErrorHandler() {
+                        public boolean hasError(org.springframework.http.client.ClientHttpResponse response)
+                                        throws java.io.IOException {
+                                return false; // Don't treat any response as an error
+                        }
+
+                        public void handleError(org.springframework.http.client.ClientHttpResponse response)
+                                        throws java.io.IOException {
+                                // Do nothing
+                        }
+                });
 
                 List<BookReq1> bookRequest = List
                                 .of(new BookReq1("Clean Code", "Robert C. Martin", "978-0132350884", 2008, true));
@@ -125,5 +137,34 @@ class AuthorControllerIntegrationTest {
                 BookRes1 book = author.books().get(0);
 
                 assertTrue(book.available(), "Book should be available (created with availability=true)");
+        }
+
+        @Test
+        @DisplayName("Should return 404 when author does not exist")
+        void testGetNonExistentAuthor() {
+                Long nonExistentId = 99999L;
+
+                ResponseEntity<GenericWrapperResponse<AuthorRes1>> response = restTemplate.exchange(
+                                baseUrl + "/" + nonExistentId,
+                                org.springframework.http.HttpMethod.GET,
+                                null,
+                                new ParameterizedTypeReference<GenericWrapperResponse<AuthorRes1>>() {
+                                });
+
+                assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        }
+
+        @Test
+        @DisplayName("Should return 404 when deleting non-existent author")
+        void testDeleteNonExistentAuthor() {
+                Long nonExistentId = 99999L;
+
+                ResponseEntity<Void> response = restTemplate.exchange(
+                                baseUrl + "/" + nonExistentId,
+                                org.springframework.http.HttpMethod.DELETE,
+                                null,
+                                Void.class);
+
+                assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
         }
 }

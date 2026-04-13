@@ -39,6 +39,18 @@ class BookControllerIntegrationTest {
         void setUp() {
                 baseUrl = "http://localhost:" + port + "/api/v1/books";
                 restTemplate = new RestTemplate();
+                // Configure RestTemplate to not throw on 4xx/5xx responses
+                restTemplate.setErrorHandler(new org.springframework.web.client.ResponseErrorHandler() {
+                        public boolean hasError(org.springframework.http.client.ClientHttpResponse response)
+                                        throws java.io.IOException {
+                                return false; // Don't treat any response as an error
+                        }
+
+                        public void handleError(org.springframework.http.client.ClientHttpResponse response)
+                                        throws java.io.IOException {
+                                // Do nothing
+                        }
+                });
 
                 List<BookReq1> bookRequest = List
                                 .of(new BookReq1("Clean Code", "Robert C. Martin", "978-0132350884", 2008, true));
@@ -123,6 +135,22 @@ class BookControllerIntegrationTest {
                 assertEquals(HttpStatus.OK, getResponse.getStatusCode());
                 assertEquals(1, getResponse.getBody().getData().size());
                 assertEquals("Clean Code", getResponse.getBody().getData().get(0).title());
+        }
+
+        @Test
+        @DisplayName("Should return 404 when trying to retrieve a non-existent book by ID")
+        void testGetNonExsistingBookById() {
+
+                Long bookId = 9999L;
+
+                ResponseEntity<GenericWrapperResponse<BookRes1>> getResponse = restTemplate.exchange(
+                                baseUrl + "/" + bookId,
+                                org.springframework.http.HttpMethod.GET,
+                                null,
+                                new ParameterizedTypeReference<GenericWrapperResponse<BookRes1>>() {
+                                });
+
+                assertEquals(HttpStatus.NOT_FOUND, getResponse.getStatusCode());
         }
 
         // ============ DELETE TESTS ============
