@@ -6,6 +6,10 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -263,6 +267,92 @@ class LoanControllerIntegrationTest {
                                 });
 
                 assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+        }
+
+        @Test
+        @DisplayName("Should handle 100+ concurrent loan requests for same book - only one succeeds")
+        void testConcurrentLoanRequests() throws InterruptedException {
+                assertEquals(HttpStatus.CREATED, savedBook.getStatusCode());
+
+                Long bookId = savedBook.getBody().getData().get(0).id();
+                int numberOfConcurrentRequests = 100;
+
+                ExecutorService executorService = Executors.newFixedThreadPool(20);
+                CountDownLatch startLatch = new CountDownLatch(1);
+                CountDownLatch endLatch = new CountDownLatch(numberOfConcurrentRequests);
+                AtomicInteger successfulLoans = new AtomicInteger(0);
+                AtomicInteger failedRequests = new AtomicInteger(0);
+
+                // Submit 100 concurrent requests to loan the same book
+                for (int i = 0; i < numberOfConcurrentRequests; i++) {
+                        executorService.submit(() -> {
+                                try {
+                                        // Wait for all threads to be ready before starting
+                                        startLatch.await();
+
+                                        List<LoanReq1> loanRequest = List.of(new LoanReq1(bookId));
+
+                                        ResponseEntity<GenericWrapperResponse<LoanRes1>> response = restTemplate
+                                                        .exchange(
+                                                                        baseUrl,
+                                                                        org.springframework.http.HttpMethod.POST,
+                                                                        new HttpEntity<>(loanRequest),
+                                                                        new ParameterizedTypeReference<GenericWrapperResponse<LoanRes1>>() {
+                                                                        });
+
+                                        if (response.getStatusCode() == HttpStatus.CREATED) {
+                                                successfulLoans.incrementAndGet();
+                                        } else {
+                                                failedRequests.incrementAndGet();
+                                        }
+                                } catch (Exception _) {
+                                        // Expected - only one should succeed
+                                        failedRequests.incrementAndGet();
+                                } finally {
+                                        endLatch.countDown();
+                                }
+                        });
+                }
+
+                // Start all threads at the same time
+                startLatch.countDown();
+
+                // Wait for all requests to complete
+                endLatch.await();
+                executorService.shutdown();
+
+                // Verify that only exactly ONE loan was created
+                assertEquals(1, successfulLoans.get(),
+                                "Only one loan should have been created for the book");
+
+                // Verify that 99 requests failed
+                assertEquals(numberOfConcurrentRequests - 1, failedRequests.get(),
+                                "99 concurrent requests should have failed");
+
+                // Verify book is marked as unavailable
+                ResponseEntity<GenericWrapperResponse<BookRes1>> bookResponse = restTemplate.exchange(
+                                booksUrl + "/" + bookId,
+                                org.springframework.http.HttpMethod.GET,
+                                null,
+                                new ParameterizedTypeReference<GenericWrapperResponse<BookRes1>>() {
+                                });
+
+                assertFalse(bookResponse.getBody().getData().get(0).available(),
+                                "Book should be unavailable after successful loan");
+
+                // Verify only one loan exists in the database
+                ResponseEntity<GenericWrapperResponse<LoanRes1>> allLoans = restTemplate.exchange(
+                                baseUrl,
+                                org.springframework.http.HttpMethod.GET,
+                                null,
+                                new ParameterizedTypeReference<GenericWrapperResponse<LoanRes1>>() {
+                                });
+
+                long loansForThisBook = allLoans.getBody().getData().stream()
+                                .filter(loan -> loan.bookId().equals(bookId))
+                                .count();
+
+                assertEquals(1, loansForThisBook, "Exactly one loan should exist for this book in database");
         }
 
 }

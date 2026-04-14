@@ -12,6 +12,9 @@ public class Book implements EntityInterface {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Version
+    private Long version;
+
     private String title;
     @ManyToOne
     private Author author;
@@ -43,6 +46,14 @@ public class Book implements EntityInterface {
     @Override
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getVersion() {
+        return version;
+    }
+
+    public void setVersion(Long version) {
+        this.version = version;
     }
 
     public String getTitle() {

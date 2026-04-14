@@ -41,22 +41,28 @@ public class LoanService extends GenericService<Loan, LoanReq1, LoanRes1> {
         List<LoanRes1> results = new ArrayList<>();
 
         for (LoanReq1 loanReq : loanReq1) {
-            Optional<Book> bookOpt = bookRepository.findById(loanReq.bookId());
+            // Use pessimistic locking to prevent race conditions
+            Optional<Book> bookOpt = bookRepository.findByIdWithLock(loanReq.bookId());
             if (bookOpt.isEmpty()) {
                 continue; // Skip invalid loans
             }
-            if (!bookOpt.get().isAvailable()) {
-                Long bookId = bookOpt.get().getId();
+
+            Book book = bookOpt.get();
+
+            // Check availability again under lock to prevent race condition
+            if (!book.isAvailable()) {
+                Long bookId = book.getId();
                 throw new BookAvailabilityException("Book with id " + bookId + " is not available");
             }
 
-            Book book = bookOpt.get();
+            // Mark as unavailable atomically within the transaction
             book.setAvailable(false);
             bookRepository.save(book);
 
             // Invalidate cache when marking book as unavailable
             bookAvailabilityService.updateAvailabilityStatus(book.getId(), false);
 
+            // Create and save loan
             Loan loan = mapper.dtoToEntity(loanReq);
             loan.setBook(book);
             loan.setLoanDate(LocalDate.now());
