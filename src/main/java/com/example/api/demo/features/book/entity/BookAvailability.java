@@ -57,7 +57,6 @@ public class BookAvailability {
 
     public void setAvailable(boolean available) {
         this.available = available;
-        this.lastUpdated = LocalDateTime.now();
     }
 
     public LocalDateTime getLastUpdated() {

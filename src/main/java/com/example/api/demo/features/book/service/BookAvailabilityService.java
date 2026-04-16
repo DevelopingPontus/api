@@ -1,5 +1,7 @@
 package com.example.api.demo.features.book.service;
 
+import java.time.LocalDateTime;
+
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -50,6 +52,7 @@ public class BookAvailabilityService {
         BookAvailability availability = bookAvailabilityRepository.findByBookId(bookId);
         if (availability != null) {
             availability.setAvailable(available);
+            availability.setLastUpdated(LocalDateTime.now());
             return bookAvailabilityRepository.save(availability);
         }
         return null;

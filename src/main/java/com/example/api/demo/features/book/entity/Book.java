@@ -89,7 +89,7 @@ public class Book implements EntityInterface {
     }
 
     public boolean isAvailable() {
-        return availability != null && availability.isAvailable();
+        return availability.isAvailable();
     }
 
     public void setAvailable(boolean available) {
