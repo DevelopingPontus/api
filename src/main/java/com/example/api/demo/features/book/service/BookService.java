@@ -54,10 +54,8 @@ public class BookService extends GenericService<Book, BookReq1, BookRes1> {
         return mapper.entityListToDtoList(books);
     }
 
-    /**
-     * Update book availability with cache refresh
-     */
-    public void updateBookAvailability(Long bookId, boolean available) {
+    // One loan made at a time
+    public synchronized void updateBookAvailability(Long bookId, boolean available) {
         bookAvailabilityService.updateAvailabilityStatus(bookId, available);
     }
 }

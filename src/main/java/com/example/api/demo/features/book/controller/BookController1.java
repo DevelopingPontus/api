@@ -29,11 +29,6 @@ public class BookController1 extends GenericController<Book, BookReq1, BookRes1>
         this.bookService = service;
     }
 
-    /**
-     * Update book availability (split caching endpoint).
-     * This endpoint updates availability separately from book metadata,
-     * allowing for more frequent updates with shorter cache TTL.
-     */
     @PutMapping("/{id}/availability")
     @Operation(summary = "Update book availability", description = "Update the availability status of a book. This refreshes the availability cache (5 min TTL) independently from book metadata cache.")
     @ApiResponse(responseCode = "200", description = "Availability updated successfully")

@@ -6,19 +6,11 @@ import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-/**
- * Caching configuration for split caching strategy.
- * 
- * Cache Strategy:
- * - bookAvailability: 5 minutes TTL (for frequently updated data)
- * - book: 1 hour TTL (for stable metadata - if needed later)
- */
 @Configuration
 @EnableCaching
-public class CachingConfig {
-
+public class CacheConfig {
     @Bean
     public CacheManager cacheManager() {
-        return new ConcurrentMapCacheManager("bookAvailability");
+        return new ConcurrentMapCacheManager("all", "byId", "bookAvailability");
     }
 }

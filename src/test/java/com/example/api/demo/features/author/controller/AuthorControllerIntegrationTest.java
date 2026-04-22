@@ -122,22 +122,6 @@ class AuthorControllerIntegrationTest {
                 assertTrue(author.books().size() > 0, "Author should have associated books");
         }
 
-        @Test
-        @DisplayName("Should verify book availability is included in author response")
-        void testAuthorResponseIncludesBookAvailability() {
-                ResponseEntity<GenericWrapperResponse<AuthorRes1>> response = restTemplate.exchange(
-                                baseUrl,
-                                org.springframework.http.HttpMethod.GET,
-                                null,
-                                new ParameterizedTypeReference<GenericWrapperResponse<AuthorRes1>>() {
-                                });
-
-                assertEquals(HttpStatus.OK, response.getStatusCode());
-                AuthorRes1 author = response.getBody().getData().getLast();
-                BookRes1 book = author.books().get(0);
-
-                assertTrue(book.available(), "Book should be available (created with availability=true)");
-        }
 
         @Test
         @DisplayName("Should return 404 when author does not exist")

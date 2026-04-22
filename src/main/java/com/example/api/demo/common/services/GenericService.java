@@ -1,6 +1,8 @@
 package com.example.api.demo.common.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.CacheEvict;
 
 import com.example.api.demo.common.interfaces.EntityInterface;
 import com.example.api.demo.common.interfaces.GenericRepository;
@@ -22,26 +24,33 @@ public abstract class GenericService<T extends EntityInterface, ReqDto, ResDto> 
         this.mapper = mapper;
     }
 
+    @Cacheable(value = "all")
     public List<ResDto> getAll() {
         return mapper.entityListToDtoList(repository.findAll());
     }
 
+    @Cacheable(value = "byId", key = "#id")
     public ResDto getById(Long id) {
         return mapper.entityToDto(repository.findById(id).orElse(null));
     }
 
-    public List<ResDto> save(List<ReqDto> dtos) {
+    @CacheEvict(value = { "all", "byId" }, allEntries = true)
+        public List<ResDto> save(List<ReqDto> dtos) {
         List<T> entities = mapper.dtoListToEntityList(dtos);
         repository.saveAll(entities);
         return mapper.entityListToDtoList(entities);
     }
 
+    @CacheEvict(value = "byId", allEntries = true)
     public void deleteById(Long id) {
         repository.deleteById(id);
     }
 
+    @CacheEvict(value = { "all", "byId" }, allEntries = true)
     public List<ResDto> update(Long id) {
-        List<T> entities = List.of(repository.findById(id).orElseThrow());
-        return mapper.entityListToDtoList(entities);
+        T entity = repository.findById(id).orElseThrow();
+        // Merge/update entity with dto data (you'll need to implement this logic)
+        T updated = repository.save(entity);
+        return List.of(mapper.entityToDto(updated));
     }
 }
