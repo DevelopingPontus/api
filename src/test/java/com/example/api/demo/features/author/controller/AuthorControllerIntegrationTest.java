@@ -19,9 +19,9 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.client.RestTemplate;
 
-import com.example.api.demo.features.author.dto.AuthorRes1;
-import com.example.api.demo.features.book.dto.BookReq1;
-import com.example.api.demo.features.book.dto.BookRes1;
+import com.example.api.demo.features.author.AuthorRes1;
+import com.example.api.demo.features.book.BookReq1;
+import com.example.api.demo.features.book.BookRes1;
 import com.example.api.demo.common.wrappers.GenericWrapperResponse;
 
 @SpringBootTest(classes = com.example.api.demo.DemoApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)

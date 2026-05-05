@@ -1,8 +1,9 @@
 package com.example.api.demo.features.book.controller;
 
-import com.example.api.demo.features.book.dto.BookReq1;
-import com.example.api.demo.features.book.dto.BookRes1;
 import com.example.api.demo.common.wrappers.GenericWrapperResponse;
+import com.example.api.demo.features.book.BookReq1;
+import com.example.api.demo.features.book.BookRes1;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

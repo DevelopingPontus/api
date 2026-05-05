@@ -10,9 +10,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.example.api.demo.features.book.entity.Book;
-import com.example.api.demo.features.book.entity.BookAvailability;
-import com.example.api.demo.features.book.repository.BookAvailabilityRepository;
+import com.example.api.demo.features.book.Book;
+import com.example.api.demo.features.book.bookAvailability.BookAvailability;
+import com.example.api.demo.features.book.bookAvailability.BookAvailabilityRepository;
+import com.example.api.demo.features.book.bookAvailability.BookAvailabilityService;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("BookAvailabilityService Unit Tests")

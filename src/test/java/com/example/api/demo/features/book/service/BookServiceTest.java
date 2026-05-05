@@ -12,14 +12,16 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.example.api.demo.features.author.entity.Author;
-import com.example.api.demo.features.author.repository.AuthorRepository;
-import com.example.api.demo.features.book.dto.BookReq1;
-import com.example.api.demo.features.book.dto.BookRes1;
-import com.example.api.demo.features.book.entity.Book;
-import com.example.api.demo.features.book.entity.BookAvailability;
-import com.example.api.demo.features.book.mapper.BookMapper;
-import com.example.api.demo.features.book.repository.BookRepository;
+import com.example.api.demo.features.author.Author;
+import com.example.api.demo.features.author.AuthorRepository;
+import com.example.api.demo.features.book.Book;
+import com.example.api.demo.features.book.BookMapper;
+import com.example.api.demo.features.book.BookRepository;
+import com.example.api.demo.features.book.BookReq1;
+import com.example.api.demo.features.book.BookRes1;
+import com.example.api.demo.features.book.BookService;
+import com.example.api.demo.features.book.bookAvailability.BookAvailability;
+import com.example.api.demo.features.book.bookAvailability.BookAvailabilityService;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("BookService Unit Tests")

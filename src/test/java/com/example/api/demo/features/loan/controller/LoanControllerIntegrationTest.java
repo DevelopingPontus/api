@@ -25,12 +25,12 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.client.RestTemplate;
 
-import com.example.api.demo.features.book.dto.BookReq1;
-import com.example.api.demo.features.book.dto.BookRes1;
 import com.example.api.demo.common.wrappers.GenericWrapperResponse;
-import com.example.api.demo.features.loan.dto.LoanReq1;
-import com.example.api.demo.features.loan.dto.LoanRes1;
-import com.example.api.demo.features.loan.service.LoanService;
+import com.example.api.demo.features.book.BookReq1;
+import com.example.api.demo.features.book.BookRes1;
+import com.example.api.demo.features.loan.LoanReq1;
+import com.example.api.demo.features.loan.LoanRes1;
+import com.example.api.demo.features.loan.LoanService;
 
 @SpringBootTest(classes = com.example.api.demo.DemoApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")

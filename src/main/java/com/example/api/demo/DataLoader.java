@@ -1,7 +1,7 @@
 package com.example.api.demo;
 
-import com.example.api.demo.features.book.dto.BookReq1;
-import com.example.api.demo.features.book.service.BookService;
+import com.example.api.demo.features.book.BookReq1;
+import com.example.api.demo.features.book.BookService;
 
 import java.util.ArrayList;
 import java.util.List;
