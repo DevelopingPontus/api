@@ -8,20 +8,20 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import com.example.api.demo.features.author.Author;
-import com.example.api.demo.features.book.Book;
-import com.example.api.demo.features.book.BookMapper;
-import com.example.api.demo.features.book.BookReq1;
-import com.example.api.demo.features.book.BookRes1;
+import com.example.api.demo.feature.author.Author;
+import com.example.api.demo.feature.book.Book;
+import com.example.api.demo.feature.book.v1.BookMapperV1;
+import com.example.api.demo.feature.book.v1.BookRequestV1;
+import com.example.api.demo.feature.book.v1.BookResponseV1;
 
 @DisplayName("BookMapper Unit Tests")
 class BookMapperTest {
 
-    private BookMapper bookMapper;
+    private BookMapperV1 bookMapper;
 
     @BeforeEach
     void setUp() {
-        bookMapper = new BookMapper();
+        bookMapper = new BookMapperV1();
     }
 
     @Test
@@ -34,7 +34,7 @@ class BookMapperTest {
         book.setAuthor(author);
 
         // Act
-        BookRes1 result = bookMapper.entityToDto(book);
+        BookResponseV1 result = bookMapper.entityToDto(book);
 
         // Assert
         assertNotNull(result);
@@ -50,7 +50,7 @@ class BookMapperTest {
     @DisplayName("Should handle null entity to DTO")
     void testEntityToDtoNull() {
         // Act
-        BookRes1 result = bookMapper.entityToDto(null);
+        BookResponseV1 result = bookMapper.entityToDto(null);
 
         // Assert
         assertNull(result);
@@ -60,7 +60,7 @@ class BookMapperTest {
     @DisplayName("Should convert DTO to entity")
     void testDtoToEntity() {
         // Arrange
-        BookReq1 bookReq = new BookReq1("Test Book", "Test Author", "ISBN123", 2024, true);
+        BookRequestV1 bookReq = new BookRequestV1("Test Book", "Test Author", "ISBN123", 2024, true);
 
         // Act
         Book result = bookMapper.dtoToEntity(bookReq);
@@ -96,7 +96,7 @@ class BookMapperTest {
         book2.setAuthor(author);
 
         // Act
-        List<BookRes1> result = bookMapper.entityListToDtoList(List.of(book1, book2));
+        List<BookResponseV1> result = bookMapper.entityListToDtoList(List.of(book1, book2));
 
         // Assert
         assertNotNull(result);
@@ -109,7 +109,7 @@ class BookMapperTest {
     @DisplayName("Should handle empty entity list")
     void testEntityListToDtoListEmpty() {
         // Act
-        List<BookRes1> result = bookMapper.entityListToDtoList(List.of());
+        List<BookResponseV1> result = bookMapper.entityListToDtoList(List.of());
 
         // Assert
         assertNotNull(result);
@@ -120,7 +120,7 @@ class BookMapperTest {
     @DisplayName("Should handle null entity list")
     void testEntityListToDtoListNull() {
         // Act
-        List<BookRes1> result = bookMapper.entityListToDtoList(null);
+        List<BookResponseV1> result = bookMapper.entityListToDtoList(null);
 
         // Assert
         assertNotNull(result);
@@ -131,8 +131,8 @@ class BookMapperTest {
     @DisplayName("Should convert DTO list to entity list")
     void testDtoListToEntityList() {
         // Arrange
-        BookReq1 bookReq1 = new BookReq1("Book 1", "Author 1", "ISBN001", 2024, true);
-        BookReq1 bookReq2 = new BookReq1("Book 2", "Author 2", "ISBN002", 2023, false);
+        BookRequestV1 bookReq1 = new BookRequestV1("Book 1", "Author 1", "ISBN001", 2024, true);
+        BookRequestV1 bookReq2 = new BookRequestV1("Book 2", "Author 2", "ISBN002", 2023, false);
 
         // Act
         List<Book> result = bookMapper.dtoListToEntityList(List.of(bookReq1, bookReq2));

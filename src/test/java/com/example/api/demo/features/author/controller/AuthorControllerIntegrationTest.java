@@ -19,10 +19,10 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.client.RestTemplate;
 
-import com.example.api.demo.features.author.AuthorRes1;
-import com.example.api.demo.features.book.BookReq1;
-import com.example.api.demo.features.book.BookRes1;
-import com.example.api.demo.common.wrappers.GenericWrapperResponse;
+import com.example.api.demo.common.wrapper.GenericWrapperResponse;
+import com.example.api.demo.feature.author.v1.AuthorResponeV1;
+import com.example.api.demo.feature.book.v1.BookRequestV1;
+import com.example.api.demo.feature.book.v1.BookResponseV1;
 
 @SpringBootTest(classes = com.example.api.demo.DemoApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
@@ -38,7 +38,7 @@ class AuthorControllerIntegrationTest {
         private String baseUrl;
         private String booksUrl;
 
-        ResponseEntity<GenericWrapperResponse<BookRes1>> savedBook;
+        ResponseEntity<GenericWrapperResponse<BookResponseV1>> savedBook;
 
         @BeforeEach
         void setUp() {
@@ -58,14 +58,14 @@ class AuthorControllerIntegrationTest {
                         }
                 });
 
-                List<BookReq1> bookRequest = List
-                                .of(new BookReq1("Clean Code", "Robert C. Martin", "978-0132350884", 2008, true));
+                List<BookRequestV1> bookRequest = List
+                                .of(new BookRequestV1("Clean Code", "Robert C. Martin", "978-0132350884", 2008, true));
 
                 savedBook = restTemplate.exchange(
                                 booksUrl,
                                 org.springframework.http.HttpMethod.POST,
                                 new HttpEntity<>(bookRequest),
-                                new ParameterizedTypeReference<GenericWrapperResponse<BookRes1>>() {
+                                new ParameterizedTypeReference<GenericWrapperResponse<BookResponseV1>>() {
                                 });
 
         }
@@ -74,11 +74,11 @@ class AuthorControllerIntegrationTest {
         @DisplayName("Should create Author when Book is created")
         void shouldCreateAuthorWhenBookIsCreated() {
 
-                ResponseEntity<GenericWrapperResponse<AuthorRes1>> authorResponse = restTemplate.exchange(
+                ResponseEntity<GenericWrapperResponse<AuthorResponeV1>> authorResponse = restTemplate.exchange(
                                 baseUrl,
                                 org.springframework.http.HttpMethod.GET,
                                 null,
-                                new ParameterizedTypeReference<GenericWrapperResponse<AuthorRes1>>() {
+                                new ParameterizedTypeReference<GenericWrapperResponse<AuthorResponeV1>>() {
                                 });
 
                 assertEquals(HttpStatus.OK, authorResponse.getStatusCode());
@@ -92,11 +92,11 @@ class AuthorControllerIntegrationTest {
         @Test
         @DisplayName("Should retrieve all authors successfully")
         void testGetAllAuthors() {
-                ResponseEntity<GenericWrapperResponse<AuthorRes1>> response = restTemplate.exchange(
+                ResponseEntity<GenericWrapperResponse<AuthorResponeV1>> response = restTemplate.exchange(
                                 baseUrl,
                                 org.springframework.http.HttpMethod.GET,
                                 null,
-                                new ParameterizedTypeReference<GenericWrapperResponse<AuthorRes1>>() {
+                                new ParameterizedTypeReference<GenericWrapperResponse<AuthorResponeV1>>() {
                                 });
 
                 assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -108,15 +108,15 @@ class AuthorControllerIntegrationTest {
         @Test
         @DisplayName("Should retrieve author with associated books")
         void testGetAuthorWithBooks() {
-                ResponseEntity<GenericWrapperResponse<AuthorRes1>> response = restTemplate.exchange(
+                ResponseEntity<GenericWrapperResponse<AuthorResponeV1>> response = restTemplate.exchange(
                                 baseUrl,
                                 org.springframework.http.HttpMethod.GET,
                                 null,
-                                new ParameterizedTypeReference<GenericWrapperResponse<AuthorRes1>>() {
+                                new ParameterizedTypeReference<GenericWrapperResponse<AuthorResponeV1>>() {
                                 });
 
                 assertEquals(HttpStatus.OK, response.getStatusCode());
-                AuthorRes1 author = response.getBody().getData().getLast();
+                AuthorResponeV1 author = response.getBody().getData().getLast();
                 assertNotNull(author.name());
                 assertNotNull(author.books());
                 assertTrue(author.books().size() > 0, "Author should have associated books");
@@ -128,11 +128,11 @@ class AuthorControllerIntegrationTest {
         void testGetNonExistentAuthor() {
                 Long nonExistentId = 99999L;
 
-                ResponseEntity<GenericWrapperResponse<AuthorRes1>> response = restTemplate.exchange(
+                ResponseEntity<GenericWrapperResponse<AuthorResponeV1>> response = restTemplate.exchange(
                                 baseUrl + "/" + nonExistentId,
                                 org.springframework.http.HttpMethod.GET,
                                 null,
-                                new ParameterizedTypeReference<GenericWrapperResponse<AuthorRes1>>() {
+                                new ParameterizedTypeReference<GenericWrapperResponse<AuthorResponeV1>>() {
                                 });
 
                 assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());

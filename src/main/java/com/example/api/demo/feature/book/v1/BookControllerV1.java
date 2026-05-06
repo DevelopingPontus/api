@@ -1,0 +1,87 @@
+package com.example.api.demo.feature.book.v1;
+
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+import com.example.api.demo.common.wrapper.GenericWrapperResponse;
+import com.example.api.demo.feature.book.BookService;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/v1/books")
+@Tag(name = "Books", description = "Operations related to books")
+public class BookControllerV1 {
+
+    protected final BookService service;
+    protected final String version;
+
+    protected BookControllerV1(BookService service) {
+        this.service = service;
+        this.version = "v1";
+    }
+
+    @Operation(summary = "Get all entities", description = "Retrieve a list of all entities")
+    @ApiResponse(responseCode = "200", description = "Successfully retrieved the list of entities")
+    @GetMapping
+
+    public ResponseEntity<GenericWrapperResponse<BookResponseV1>> getAll() {
+        List<BookResponseV1> entities = service.getAll();
+        GenericWrapperResponse<BookResponseV1> wrapperResponse = new GenericWrapperResponse<>(entities, version);
+        return ResponseEntity.ok(wrapperResponse);
+    }
+
+    @Operation(summary = "Get entity by ID", description = "Retrieve an entity by its ID")
+    @Parameter(name = "id", required = true, description = "ID of the entity to retrieve")
+    @ApiResponse(responseCode = "200", description = "Successfully retrieved the entity")
+    @ApiResponse(responseCode = "404", description = "Entity not found")
+    @GetMapping("{id}")
+
+    public ResponseEntity<GenericWrapperResponse<BookResponseV1>> getById(@PathVariable Long id) {
+        BookResponseV1 entity = service.getById(id);
+        if (entity == null) {
+            return ResponseEntity.notFound().build();
+        }
+        List<BookResponseV1> singleList = List.of(entity);
+        GenericWrapperResponse<BookResponseV1> wrapperResponse = new GenericWrapperResponse<>(singleList, version);
+        return ResponseEntity.ok(wrapperResponse);
+    }
+
+    @Operation(summary = "Save a new entity", description = "Create a new entity")
+    @ApiResponse(responseCode = "201", description = "Entity created successfully")
+    @PostMapping
+
+    public ResponseEntity<GenericWrapperResponse<BookResponseV1>> save(@RequestBody @Validated List<BookRequestV1> dtos) {
+        List<BookResponseV1> savedDto = service.save(dtos);
+        GenericWrapperResponse<BookResponseV1> wrapperResponse = new GenericWrapperResponse<>(savedDto, version);
+        return ResponseEntity.status(201).body(wrapperResponse);
+    }
+
+    @Operation(summary = "Delete an entity by ID", description = "Delete an entity by its ID")
+    @Parameter(name = "id", required = true, description = "ID of the entity to delete")
+    @ApiResponse(responseCode = "204", description = "Entity deleted successfully")
+    @DeleteMapping("{id}")
+
+    public ResponseEntity<Void> deleteById(@PathVariable Long id) {
+        service.deleteById(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @Operation(summary = "Update an entity by ID", description = "Update an entity by its ID. Only implemented for Loan entities.")
+    @Parameter(name = "id", required = true, description = "ID of the entity to update")
+    @ApiResponse(responseCode = "200", description = "Entity updated successfully")
+    @PutMapping("{id}")
+
+    public ResponseEntity<GenericWrapperResponse<BookResponseV1>> update(@PathVariable Long id) {
+        List<BookResponseV1> updatedDtos = service.update(id);
+        GenericWrapperResponse<BookResponseV1> wrapperResponse = new GenericWrapperResponse<>(updatedDtos, version);
+        return ResponseEntity.ok(wrapperResponse);
+    }
+
+}

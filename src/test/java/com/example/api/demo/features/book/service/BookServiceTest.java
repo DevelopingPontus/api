@@ -12,16 +12,16 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.example.api.demo.features.author.Author;
-import com.example.api.demo.features.author.AuthorRepository;
-import com.example.api.demo.features.book.Book;
-import com.example.api.demo.features.book.BookMapper;
-import com.example.api.demo.features.book.BookRepository;
-import com.example.api.demo.features.book.BookReq1;
-import com.example.api.demo.features.book.BookRes1;
-import com.example.api.demo.features.book.BookService;
-import com.example.api.demo.features.book.bookAvailability.BookAvailability;
-import com.example.api.demo.features.book.bookAvailability.BookAvailabilityService;
+import com.example.api.demo.feature.author.Author;
+import com.example.api.demo.feature.author.AuthorRepository;
+import com.example.api.demo.feature.book.Book;
+import com.example.api.demo.feature.book.BookRepository;
+import com.example.api.demo.feature.book.BookService;
+import com.example.api.demo.feature.book.bookAvailability.BookAvailability;
+import com.example.api.demo.feature.book.bookAvailability.BookAvailabilityService;
+import com.example.api.demo.feature.book.v1.BookMapperV1;
+import com.example.api.demo.feature.book.v1.BookRequestV1;
+import com.example.api.demo.feature.book.v1.BookResponseV1;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("BookService Unit Tests")
@@ -36,7 +36,7 @@ class BookServiceTest {
     private AuthorRepository authorRepository;
 
     @Mock
-    private BookMapper bookMapper;
+    private BookMapperV1 bookMapper;
 
     @Mock
     private BookAvailabilityService bookAvailabilityService;
@@ -65,7 +65,7 @@ class BookServiceTest {
     void testSaveBooks() {
         // Arrange
         Author author = new Author("Test Author");
-        BookReq1 bookReq = new BookReq1("Test Book", "Test Author", "ISBN123", 2024, true);
+        BookRequestV1 bookReq = new BookRequestV1("Test Book", "Test Author", "ISBN123", 2024, true);
         Book book = new Book("Test Book", "ISBN123", 2024);
         book.setId(1L);
         book.setAuthor(author);
@@ -77,10 +77,10 @@ class BookServiceTest {
         when(bookAvailabilityService.updateAvailability(any(BookAvailability.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
         when(bookMapper.entityListToDtoList(anyList()))
-                .thenReturn(List.of(new BookRes1(1L, "Test Book", "Test Author", "ISBN123", 2024, true)));
+                .thenReturn(List.of(new BookResponseV1(1L, "Test Book", "Test Author", "ISBN123", 2024, true)));
 
         // Act
-        List<BookRes1> result = bookService.save(List.of(bookReq));
+        List<BookResponseV1> result = bookService.save(List.of(bookReq));
 
         // Assert
         assertNotNull(result);
@@ -94,7 +94,7 @@ class BookServiceTest {
     void testSaveBookWithExistingAuthor() {
         // Arrange
         Author existingAuthor = new Author("Existing Author");
-        BookReq1 bookReq = new BookReq1("Test Book", "Existing Author", "ISBN123", 2024, true);
+        BookRequestV1 bookReq = new BookRequestV1("Test Book", "Existing Author", "ISBN123", 2024, true);
         Book book = new Book("Test Book", "ISBN123", 2024);
         book.setId(1L);
         book.setAuthor(existingAuthor);
@@ -105,10 +105,10 @@ class BookServiceTest {
         when(bookAvailabilityService.updateAvailability(any(BookAvailability.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
         when(bookMapper.entityListToDtoList(anyList()))
-                .thenReturn(List.of(new BookRes1(1L, "Test Book", "Existing Author", "ISBN123", 2024, true)));
+                .thenReturn(List.of(new BookResponseV1(1L, "Test Book", "Existing Author", "ISBN123", 2024, true)));
 
         // Act
-        List<BookRes1> result = bookService.save(List.of(bookReq));
+        List<BookResponseV1> result = bookService.save(List.of(bookReq));
 
         // Assert
         assertNotNull(result);

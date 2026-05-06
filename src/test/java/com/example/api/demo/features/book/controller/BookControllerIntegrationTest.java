@@ -1,8 +1,8 @@
 package com.example.api.demo.features.book.controller;
 
-import com.example.api.demo.common.wrappers.GenericWrapperResponse;
-import com.example.api.demo.features.book.BookReq1;
-import com.example.api.demo.features.book.BookRes1;
+import com.example.api.demo.common.wrapper.GenericWrapperResponse;
+import com.example.api.demo.feature.book.v1.BookRequestV1;
+import com.example.api.demo.feature.book.v1.BookResponseV1;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -34,7 +34,7 @@ class BookControllerIntegrationTest {
 
         private String baseUrl;
 
-        ResponseEntity<GenericWrapperResponse<BookRes1>> savedBook;
+        ResponseEntity<GenericWrapperResponse<BookResponseV1>> savedBook;
 
         @BeforeEach
         void setUp() {
@@ -53,14 +53,14 @@ class BookControllerIntegrationTest {
                         }
                 });
 
-                List<BookReq1> bookRequest = List
-                                .of(new BookReq1("Clean Code", "Robert C. Martin", "978-0132350884", 2008, true));
+                List<BookRequestV1> bookRequest = List
+                                .of(new BookRequestV1("Clean Code", "Robert C. Martin", "978-0132350884", 2008, true));
 
                 savedBook = restTemplate.exchange(
                                 baseUrl,
                                 org.springframework.http.HttpMethod.POST,
                                 new HttpEntity<>(bookRequest),
-                                new ParameterizedTypeReference<GenericWrapperResponse<BookRes1>>() {
+                                new ParameterizedTypeReference<GenericWrapperResponse<BookResponseV1>>() {
                                 });
         }
 
@@ -69,11 +69,11 @@ class BookControllerIntegrationTest {
         @Test
         @DisplayName("Should retrieve all books successfully")
         void testGetAllBooks() {
-                ResponseEntity<GenericWrapperResponse<BookRes1>> response = restTemplate.exchange(
+                ResponseEntity<GenericWrapperResponse<BookResponseV1>> response = restTemplate.exchange(
                                 baseUrl,
                                 org.springframework.http.HttpMethod.GET,
                                 null,
-                                new ParameterizedTypeReference<GenericWrapperResponse<BookRes1>>() {
+                                new ParameterizedTypeReference<GenericWrapperResponse<BookResponseV1>>() {
                                 });
 
                 assertEquals(HttpStatus.OK, response.getStatusCode());
@@ -93,7 +93,7 @@ class BookControllerIntegrationTest {
                 assertEquals("v1", savedBook.getBody().getVersion());
                 assertEquals(1, savedBook.getBody().getData().size());
 
-                BookRes1 createdBook = savedBook.getBody().getData().get(0);
+                BookResponseV1 createdBook = savedBook.getBody().getData().get(0);
                 assertEquals("Clean Code", createdBook.title());
                 assertEquals("Robert C. Martin", createdBook.author());
                 assertEquals("978-0132350884", createdBook.isbn());
@@ -103,15 +103,15 @@ class BookControllerIntegrationTest {
         @Test
         @DisplayName("Should create multiple books in sequence")
         void testCreateMultipleBooks() {
-                List<BookReq1> book1 = List.of(
-                                new BookReq1("The Pragmatic Programmer", "David Thomas", "978-0201616224", 1999, true),
-                                new BookReq1("Design Patterns", "Gang of Four", "978-0201633610", 1994, true));
+                List<BookRequestV1> book1 = List.of(
+                                new BookRequestV1("The Pragmatic Programmer", "David Thomas", "978-0201616224", 1999, true),
+                                new BookRequestV1("Design Patterns", "Gang of Four", "978-0201633610", 1994, true));
 
-                ResponseEntity<GenericWrapperResponse<BookRes1>> response1 = restTemplate.exchange(
+                ResponseEntity<GenericWrapperResponse<BookResponseV1>> response1 = restTemplate.exchange(
                                 baseUrl,
                                 org.springframework.http.HttpMethod.POST,
                                 new HttpEntity<>(book1),
-                                new ParameterizedTypeReference<GenericWrapperResponse<BookRes1>>() {
+                                new ParameterizedTypeReference<GenericWrapperResponse<BookResponseV1>>() {
                                 });
 
                 assertEquals(HttpStatus.CREATED, response1.getStatusCode());
@@ -126,11 +126,11 @@ class BookControllerIntegrationTest {
 
                 Long bookId = savedBook.getBody().getData().get(0).id();
 
-                ResponseEntity<GenericWrapperResponse<BookRes1>> getResponse = restTemplate.exchange(
+                ResponseEntity<GenericWrapperResponse<BookResponseV1>> getResponse = restTemplate.exchange(
                                 baseUrl + "/" + bookId,
                                 org.springframework.http.HttpMethod.GET,
                                 null,
-                                new ParameterizedTypeReference<GenericWrapperResponse<BookRes1>>() {
+                                new ParameterizedTypeReference<GenericWrapperResponse<BookResponseV1>>() {
                                 });
 
                 assertEquals(HttpStatus.OK, getResponse.getStatusCode());
@@ -144,11 +144,11 @@ class BookControllerIntegrationTest {
 
                 Long bookId = 9999L;
 
-                ResponseEntity<GenericWrapperResponse<BookRes1>> getResponse = restTemplate.exchange(
+                ResponseEntity<GenericWrapperResponse<BookResponseV1>> getResponse = restTemplate.exchange(
                                 baseUrl + "/" + bookId,
                                 org.springframework.http.HttpMethod.GET,
                                 null,
-                                new ParameterizedTypeReference<GenericWrapperResponse<BookRes1>>() {
+                                new ParameterizedTypeReference<GenericWrapperResponse<BookResponseV1>>() {
                                 });
 
                 assertEquals(HttpStatus.NOT_FOUND, getResponse.getStatusCode());
@@ -189,7 +189,7 @@ class BookControllerIntegrationTest {
         @Test
         @DisplayName("Should create book with availability true")
         void testCreateBookWithAvailabilityTrue() {
-                BookRes1 createdBook = savedBook.getBody().getData().get(0);
+                BookResponseV1 createdBook = savedBook.getBody().getData().get(0);
                 assertTrue(createdBook.available(), "Book should be available when created");
         }
 
@@ -208,11 +208,11 @@ class BookControllerIntegrationTest {
                 assertEquals(HttpStatus.OK, updateResponse.getStatusCode());
 
                 // Verify availability changed
-                ResponseEntity<GenericWrapperResponse<BookRes1>> getResponse = restTemplate.exchange(
+                ResponseEntity<GenericWrapperResponse<BookResponseV1>> getResponse = restTemplate.exchange(
                                 baseUrl + "/" + bookId,
                                 org.springframework.http.HttpMethod.GET,
                                 null,
-                                new ParameterizedTypeReference<GenericWrapperResponse<BookRes1>>() {
+                                new ParameterizedTypeReference<GenericWrapperResponse<BookResponseV1>>() {
                                 });
 
                 assertFalse(getResponse.getBody().getData().get(0).available(),
@@ -241,11 +241,11 @@ class BookControllerIntegrationTest {
                 assertEquals(HttpStatus.OK, updateResponse.getStatusCode());
 
                 // Verify availability changed
-                ResponseEntity<GenericWrapperResponse<BookRes1>> getResponse = restTemplate.exchange(
+                ResponseEntity<GenericWrapperResponse<BookResponseV1>> getResponse = restTemplate.exchange(
                                 baseUrl + "/" + bookId,
                                 org.springframework.http.HttpMethod.GET,
                                 null,
-                                new ParameterizedTypeReference<GenericWrapperResponse<BookRes1>>() {
+                                new ParameterizedTypeReference<GenericWrapperResponse<BookResponseV1>>() {
                                 });
 
                 assertTrue(getResponse.getBody().getData().get(0).available(),
@@ -268,11 +268,11 @@ class BookControllerIntegrationTest {
 
                         assertEquals(HttpStatus.OK, updateResponse.getStatusCode());
 
-                        ResponseEntity<GenericWrapperResponse<BookRes1>> getResponse = restTemplate.exchange(
+                        ResponseEntity<GenericWrapperResponse<BookResponseV1>> getResponse = restTemplate.exchange(
                                         baseUrl + "/" + bookId,
                                         org.springframework.http.HttpMethod.GET,
                                         null,
-                                        new ParameterizedTypeReference<GenericWrapperResponse<BookRes1>>() {
+                                        new ParameterizedTypeReference<GenericWrapperResponse<BookResponseV1>>() {
                                         });
 
                         assertEquals(shouldBeAvailable, getResponse.getBody().getData().get(0).available());
@@ -286,15 +286,15 @@ class BookControllerIntegrationTest {
         void testGetBookWithAllFields() {
                 Long bookId = savedBook.getBody().getData().get(0).id();
 
-                ResponseEntity<GenericWrapperResponse<BookRes1>> response = restTemplate.exchange(
+                ResponseEntity<GenericWrapperResponse<BookResponseV1>> response = restTemplate.exchange(
                                 baseUrl + "/" + bookId,
                                 org.springframework.http.HttpMethod.GET,
                                 null,
-                                new ParameterizedTypeReference<GenericWrapperResponse<BookRes1>>() {
+                                new ParameterizedTypeReference<GenericWrapperResponse<BookResponseV1>>() {
                                 });
 
                 assertEquals(HttpStatus.OK, response.getStatusCode());
-                BookRes1 book = response.getBody().getData().get(0);
+                BookResponseV1 book = response.getBody().getData().get(0);
 
                 assertNotNull(book.id());
                 assertNotNull(book.title());
@@ -307,22 +307,22 @@ class BookControllerIntegrationTest {
         @DisplayName("Should get all books including newly created ones")
         void testGetAllBooksIncludesNewBooks() {
                 // Create additional book
-                List<BookReq1> newBook = List.of(
-                                new BookReq1("Effective Java", "Joshua Bloch", "978-0134685991", 2017, true));
+                List<BookRequestV1> newBook = List.of(
+                                new BookRequestV1("Effective Java", "Joshua Bloch", "978-0134685991", 2017, true));
 
                 restTemplate.exchange(
                                 baseUrl,
                                 org.springframework.http.HttpMethod.POST,
                                 new HttpEntity<>(newBook),
-                                new ParameterizedTypeReference<GenericWrapperResponse<BookRes1>>() {
+                                new ParameterizedTypeReference<GenericWrapperResponse<BookResponseV1>>() {
                                 });
 
                 // Get all books
-                ResponseEntity<GenericWrapperResponse<BookRes1>> response = restTemplate.exchange(
+                ResponseEntity<GenericWrapperResponse<BookResponseV1>> response = restTemplate.exchange(
                                 baseUrl,
                                 org.springframework.http.HttpMethod.GET,
                                 null,
-                                new ParameterizedTypeReference<GenericWrapperResponse<BookRes1>>() {
+                                new ParameterizedTypeReference<GenericWrapperResponse<BookResponseV1>>() {
                                 });
 
                 assertTrue(response.getBody().getData().size() >= 2,
