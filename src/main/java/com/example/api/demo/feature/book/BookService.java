@@ -19,69 +19,45 @@ import com.example.api.demo.feature.book.v1.BookResponseV1;
 
 @Service
 public class BookService {
-    private final BookRepository repository;
-    private final AuthorRepository authorRepository;
-    private final BookMapperV1 mapper;
+    private final BookRepository bookRepository;
     private final BookAvailabilityService bookAvailabilityService;
 
-    public BookService(BookRepository repository, BookMapperV1 mapper, AuthorRepository authorRepository,
-            BookAvailabilityService bookAvailabilityService) {
-        this.repository = repository;
-        this.authorRepository = authorRepository;
-        this.mapper = mapper;
+    public BookService(BookRepository bookRepository, BookAvailabilityService bookAvailabilityService) {
+        this.bookRepository = bookRepository;
         this.bookAvailabilityService = bookAvailabilityService;
     }
 
     @Cacheable(value = "all")
-    public List<BookResponseV1> getAll() {
-        return mapper.entityListToDtoList(repository.findAll());
+    public List<Book> getAll() {
+        return bookRepository.findAll();
     }
 
     @Cacheable(value = "byId", key = "#id")
-    public Book getById(Long bookId) {
-        Optional<Book> book = repository.findById(bookId);
+    public Optional<Book> getById(Long bookId) {
+        Optional<Book> book = bookRepository.findById(bookId);
         if (book.isPresent()) {
-            return book.get();
+            return book;
         } else {
             throw new BookNotFoundException("Book with id " + bookId + " not found.");
         }
     }
 
-    public List<BookResponseV1> save(List<BookRequestV1> dtos) {
-        List<Book> books = new ArrayList<>();
-        for (BookRequestV1 bookReq1 : dtos) {
-            Author author;
-            if (authorRepository.findByName(bookReq1.author()) == null) {
-                author = new Author(bookReq1.author());
-                authorRepository.save(author);
-            } else {
-                author = authorRepository.findByName(bookReq1.author());
-            }
-            Book book = mapper.dtoToEntity(bookReq1);
-            book.setAuthor(author);
-            repository.save(book);
-
-            // Create availability record for split caching
-            BookAvailability availability = new BookAvailability(book, bookReq1.available());
-            bookAvailabilityService.updateAvailability(availability);
-            book.setAvailability(availability);
-
-            books.add(book);
-        }
-        return mapper.entityListToDtoList(books);
+    public Book save(Book book) {
+        BookAvailability bookAvailability = new BookAvailability(book, true);
+        bookAvailabilityService.save(bookAvailability);
+        book.setAvailability(bookAvailability);
+        return bookRepository.save(book);
     }
 
     @CacheEvict(value = "byId", allEntries = true)
     public void deleteById(Long id) {
-        repository.deleteById(id);
+        getById(id);
+        bookRepository.deleteById(id);
     }
 
     @CacheEvict(value = { "all", "byId" }, allEntries = true)
-    public List<BookResponseV1> update(Long id) {
-        Book entity = repository.findById(id).orElseThrow();
-        // Merge/update entity with dto data (you'll need to implement this logic)
-        Book updated = repository.save(entity);
-        return List.of(mapper.entityToDto(updated));
+    public Book update(Book book) {
+        return bookRepository.save(book);
     }
 
     // One loan made at a time

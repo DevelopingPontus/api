@@ -38,8 +38,9 @@ public class LoanFacade {
     }
 
     @Cacheable(value = "byId", key = "#id")
-    public LoanResponseV1 getById(Long id) {
-        return loanMapperV1.entityToDto(loanService.getById(id).orElse(null));
+    public LoanResponseV1 getById(Long loanId) {
+        Loan loan = (loanService.getById(loanId).get());
+        return loanMapperV1.entityToDto(loan);
     }
 
     @CacheEvict(value = "byId", allEntries = true)

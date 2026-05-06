@@ -24,6 +24,10 @@ public class BookAvailabilityService {
         return bookAvailabilityRepository.save(availability);
     }
 
+    public BookAvailability save(BookAvailability bookAvailability) {
+        return bookAvailabilityRepository.save(bookAvailability);
+    }
+
     @CacheEvict(value = "bookAvailability", key = "#bookId")
     public BookAvailability updateAvailabilityStatus(Long bookId, boolean available) {
         BookAvailability availability = bookAvailabilityRepository.findByBookId(bookId);

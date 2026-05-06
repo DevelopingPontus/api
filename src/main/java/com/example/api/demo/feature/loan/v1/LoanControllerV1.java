@@ -34,8 +34,8 @@ public class LoanControllerV1 {
         this.version = "v1";
     }
 
-    @Operation(summary = "Get all entities", description = "Retrieve a list of all entities")
-    @ApiResponse(responseCode = "200", description = "Successfully retrieved the list of entities")
+    @Operation(summary = "Get all loans", description = "Retrieve a list of all loans")
+    @ApiResponse(responseCode = "200", description = "Successfully retrieved the list of loans")
     @GetMapping
 
     public ResponseEntity<GenericWrapperResponse<LoanResponseV1>> getAll() {
@@ -44,31 +44,25 @@ public class LoanControllerV1 {
         return ResponseEntity.ok(wrapperResponse);
     }
 
-    @Operation(summary = "Get entity by ID", description = "Retrieve an entity by its ID")
-    @Parameter(name = "id", required = true, description = "ID of the entity to retrieve")
-    @ApiResponse(responseCode = "200", description = "Successfully retrieved the entity")
-    @ApiResponse(responseCode = "404", description = "Entity not found")
+    @Operation(summary = "Get loan by it's ID", description = "Retrieve loan")
+    @Parameter(name = "loanId", required = true, description = "ID of the loan to retrieve")
+    @ApiResponse(responseCode = "200", description = "Successfully retrieved the loan")
+    @ApiResponse(responseCode = "404", description = "Loan not found")
     @GetMapping("{loanId}")
     public ResponseEntity<GenericWrapperResponse<LoanResponseV1>> getById(@PathVariable Long loanId) {
         List<LoanResponseV1> singleList = List.of(loanFacade.getById(loanId));
         GenericWrapperResponse<LoanResponseV1> wrapperResponse = new GenericWrapperResponse<>(singleList, version);
         return ResponseEntity.ok(wrapperResponse);
     }
-    
 
-
-    
-    @Operation(summary = "Delete an entity by ID", description = "Delete an entity by its ID")
-    @Parameter(name = "id", required = true, description = "ID of the entity to delete")
-    @ApiResponse(responseCode = "204", description = "Entity deleted successfully")
+    @Operation(summary = "Delete loan by it's ID", description = "Delete a loan")
+    @Parameter(name = "loanId", required = true, description = "ID of the loan to delete")
+    @ApiResponse(responseCode = "204", description = "Loan deleted successfully")
     @DeleteMapping("{loanId}")
     public ResponseEntity<Void> deleteById(@PathVariable Long loanId) {
         loanFacade.deleteById(loanId);
         return ResponseEntity.noContent().build();
     }
-
-
-
 
     @Operation(summary = "Make loan with Book Id", description = "Create a new loan")
     @Parameter(name = "bookId", required = true, description = "ID of the book to loan")
@@ -79,9 +73,6 @@ public class LoanControllerV1 {
         GenericWrapperResponse<LoanResponseV1> wrapperResponse = new GenericWrapperResponse<>(savedDto, version);
         return ResponseEntity.status(201).body(wrapperResponse);
     }
-
-
-
 
     @Operation(summary = "Return book by Book Id", description = "Uses Book Id to return loan if book is on loan")
     @Parameter(name = "bookId", required = true, description = "ID of the book to return")

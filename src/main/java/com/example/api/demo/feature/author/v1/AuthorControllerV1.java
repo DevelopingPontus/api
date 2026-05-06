@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.api.demo.common.wrapper.GenericWrapperResponse;
+import com.example.api.demo.feature.author.AuthorFacade;
 import com.example.api.demo.feature.author.AuthorService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -27,11 +28,11 @@ import org.springframework.validation.annotation.Validated;
 @Tag(name = "Author Controller", description = "Operations about Authors")
 public class AuthorControllerV1 {
 
-    protected final AuthorService service;
+    protected final AuthorFacade authorFacade;
     protected final String version;
 
-    protected AuthorControllerV1(AuthorService service) {
-        this.service = service;
+    protected AuthorControllerV1(AuthorFacade authorFacade) {
+        this.authorFacade = authorFacade;
         this.version = "v1";
     }
 
@@ -40,7 +41,7 @@ public class AuthorControllerV1 {
     @GetMapping
 
     public ResponseEntity<GenericWrapperResponse<AuthorResponeV1>> getAll() {
-        List<AuthorResponeV1> entities = service.getAll();
+        List<AuthorResponeV1> entities = authorFacade.getAll();
         GenericWrapperResponse<AuthorResponeV1> wrapperResponse = new GenericWrapperResponse<>(entities, version);
         return ResponseEntity.ok(wrapperResponse);
     }
@@ -52,7 +53,7 @@ public class AuthorControllerV1 {
     @GetMapping("{id}")
 
     public ResponseEntity<GenericWrapperResponse<AuthorResponeV1>> getById(@PathVariable Long id) {
-        AuthorResponeV1 entity = service.getById(id);
+        AuthorResponeV1 entity = authorFacade.getById(id);
         if (entity == null) {
             return ResponseEntity.notFound().build();
         }
@@ -66,7 +67,7 @@ public class AuthorControllerV1 {
     @PostMapping
 
     public ResponseEntity<GenericWrapperResponse<AuthorResponeV1>> save(@RequestBody @Validated List<AuthorRequestV1> dtos) {
-        List<AuthorResponeV1> savedDto = service.save(dtos);
+        List<AuthorResponeV1> savedDto = authorFacade.save(dtos);
         GenericWrapperResponse<AuthorResponeV1> wrapperResponse = new GenericWrapperResponse<>(savedDto, version);
         return ResponseEntity.status(201).body(wrapperResponse);
     }
@@ -77,7 +78,7 @@ public class AuthorControllerV1 {
     @DeleteMapping("{id}")
 
     public ResponseEntity<Void> deleteById(@PathVariable Long id) {
-        service.deleteById(id);
+        authorFacade.deleteById(id);
         return ResponseEntity.noContent().build();
     }
 
@@ -87,7 +88,7 @@ public class AuthorControllerV1 {
     @PutMapping("{id}")
 
     public ResponseEntity<GenericWrapperResponse<AuthorResponeV1>> update(@PathVariable Long id) {
-        List<AuthorResponeV1> updatedDtos = service.update(id);
+        List<AuthorResponeV1> updatedDtos = authorFacade.update(id);
         GenericWrapperResponse<AuthorResponeV1> wrapperResponse = new GenericWrapperResponse<>(updatedDtos, version);
         return ResponseEntity.ok(wrapperResponse);
     }

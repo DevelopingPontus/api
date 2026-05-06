@@ -5,50 +5,38 @@ import java.util.Optional;
 
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.stereotype.Service;
 
 import com.example.api.demo.feature.author.v1.AuthorMapperV1;
-import com.example.api.demo.feature.author.v1.AuthorRequestV1;
 import com.example.api.demo.feature.author.v1.AuthorResponeV1;
 
-@Service
-public class AuthorService {
+public class AuthorFacade {
 
-    protected final AuthorRepository authorRepository;
+    protected final AuthorService authorService;
     protected final AuthorMapperV1 mapper;
 
-    protected AuthorService(AuthorRepository repository, AuthorMapperV1 mapper) {
-        this.repository = repository;
+    protected AuthorFacade(AuthorService authorService, AuthorMapperV1 mapper) {
+        this.authorService = authorService;
         this.mapper = mapper;
     }
 
     @Cacheable(value = "all")
     public List<AuthorResponeV1> getAll() {
-        return mapper.entityListToDtoList(repository.findAll());
+        return mapper.entityListToDtoList(authorService.getAll());
     }
 
     @Cacheable(value = "byId", key = "#id")
     public AuthorResponeV1 getById(Long id) {
-        return mapper.entityToDto(repository.findById(id).orElse(null));
-    }
-
-    public Optional<Author> getByName(String name) {
-        Optional<Author> author = authorRepository.findByName(name);
-        if (author.isPresent()){
-            return author;
-        } else {
-            return null;
-        }
+        return mapper.entityToDto(authorService.getById(id));
     }
 
     @CacheEvict(value = { "all", "byId" }, allEntries = true)
     public Author save(Author author) {
-        return authorRepository.save(author);
+        return authorService.save(author);
     }
 
     @CacheEvict(value = "byId", allEntries = true)
     public void deleteById(Long id) {
-        repository.deleteById(id);
+        authorService.deleteById(id);
     }
 
     @CacheEvict(value = { "all", "byId" }, allEntries = true)

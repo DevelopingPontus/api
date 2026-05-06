@@ -6,16 +6,16 @@ import java.util.List;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
-import com.example.api.demo.feature.book.BookService;
+import com.example.api.demo.feature.book.BookFacade;
 import com.example.api.demo.feature.book.v1.BookRequestV1;
 
 @Component
 public class DataLoader implements CommandLineRunner {
 
-    private final BookService bookService;
+    private final BookFacade bookFacade;
 
-    public DataLoader(BookService bookService) {
-        this.bookService = bookService;
+    public DataLoader(BookFacade bookFacade) {
+        this.bookFacade = bookFacade;
     }
 
     @Override
@@ -38,7 +38,7 @@ public class DataLoader implements CommandLineRunner {
         BookRequestV1 book3 = new BookRequestV1("Brave New World", "Aldous Huxley", "12500", 1932, false);
         books.add(book3);
 
-        bookService.save(books);
+        bookFacade.save(books);
 
     }
 }
