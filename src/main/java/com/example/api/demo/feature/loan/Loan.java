@@ -26,8 +26,7 @@ public class Loan {
     public Loan() {
     }
 
-    public Loan(Long id, Book book) {
-        this.id = id;
+    public Loan(Book book) {
         this.book = book;
         this.loanDate = LocalDate.now();
         this.retunDate = null;

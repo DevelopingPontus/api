@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.api.demo.common.wrapper.GenericWrapperResponse;
-import com.example.api.demo.feature.loan.LoanService;
+import com.example.api.demo.feature.loan.LoanFacade;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -26,11 +26,11 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @Tag(name = "Loans", description = "Operations related to loans")
 public class LoanControllerV1 {
 
-    protected final LoanService service;
+    protected final LoanFacade loanFacade;
     protected final String version;
 
-    protected LoanControllerV1(LoanService service) {
-        this.service = service;
+    protected LoanControllerV1(LoanFacade loanFacade) {
+        this.loanFacade = loanFacade;
         this.version = "v1";
     }
 
@@ -39,7 +39,7 @@ public class LoanControllerV1 {
     @GetMapping
 
     public ResponseEntity<GenericWrapperResponse<LoanResponseV1>> getAll() {
-        List<LoanResponseV1> entities = service.getAll();
+        List<LoanResponseV1> entities = loanFacade.getAll();
         GenericWrapperResponse<LoanResponseV1> wrapperResponse = new GenericWrapperResponse<>(entities, version);
         return ResponseEntity.ok(wrapperResponse);
     }
@@ -48,45 +48,47 @@ public class LoanControllerV1 {
     @Parameter(name = "id", required = true, description = "ID of the entity to retrieve")
     @ApiResponse(responseCode = "200", description = "Successfully retrieved the entity")
     @ApiResponse(responseCode = "404", description = "Entity not found")
-    @GetMapping("{id}")
-
-    public ResponseEntity<GenericWrapperResponse<LoanResponseV1>> getById(@PathVariable Long id) {
-        LoanResponseV1 entity = service.getById(id);
-        if (entity == null) {
-            return ResponseEntity.notFound().build();
-        }
-        List<LoanResponseV1> singleList = List.of(entity);
+    @GetMapping("{loanId}")
+    public ResponseEntity<GenericWrapperResponse<LoanResponseV1>> getById(@PathVariable Long loanId) {
+        List<LoanResponseV1> singleList = List.of(loanFacade.getById(loanId));
         GenericWrapperResponse<LoanResponseV1> wrapperResponse = new GenericWrapperResponse<>(singleList, version);
         return ResponseEntity.ok(wrapperResponse);
     }
+    
 
-    @Operation(summary = "Save a new entity", description = "Create a new entity")
+
+    
+    @Operation(summary = "Delete an entity by ID", description = "Delete an entity by its ID")
+    @Parameter(name = "id", required = true, description = "ID of the entity to delete")
+    @ApiResponse(responseCode = "204", description = "Entity deleted successfully")
+    @DeleteMapping("{loanId}")
+    public ResponseEntity<Void> deleteById(@PathVariable Long loanId) {
+        loanFacade.deleteById(loanId);
+        return ResponseEntity.noContent().build();
+    }
+
+
+
+
+    @Operation(summary = "Make loan with Book Id", description = "Create a new loan")
+    @Parameter(name = "bookId", required = true, description = "ID of the book to loan")
     @ApiResponse(responseCode = "201", description = "Entity created successfully")
     @PostMapping
-
-    public ResponseEntity<GenericWrapperResponse<LoanResponseV1>> save(@RequestBody @Validated List<LoanReqestV1> dtos) {
-        List<LoanResponseV1> savedDto = service.save(dtos);
+    public ResponseEntity<GenericWrapperResponse<LoanResponseV1>> save(@RequestBody Long bookId) {
+        List<LoanResponseV1> savedDto = List.of(loanFacade.save(bookId));
         GenericWrapperResponse<LoanResponseV1> wrapperResponse = new GenericWrapperResponse<>(savedDto, version);
         return ResponseEntity.status(201).body(wrapperResponse);
     }
 
-    @Operation(summary = "Delete an entity by ID", description = "Delete an entity by its ID")
-    @Parameter(name = "id", required = true, description = "ID of the entity to delete")
-    @ApiResponse(responseCode = "204", description = "Entity deleted successfully")
-    @DeleteMapping("{id}")
 
-    public ResponseEntity<Void> deleteById(@PathVariable Long id) {
-        service.deleteById(id);
-        return ResponseEntity.noContent().build();
-    }
 
-    @Operation(summary = "Update an entity by ID", description = "Update an entity by its ID. Only implemented for Loan entities.")
-    @Parameter(name = "id", required = true, description = "ID of the entity to update")
+
+    @Operation(summary = "Return book by Book Id", description = "Uses Book Id to return loan if book is on loan")
+    @Parameter(name = "bookId", required = true, description = "ID of the book to return")
     @ApiResponse(responseCode = "200", description = "Entity updated successfully")
-    @PutMapping("{id}")
-
-    public ResponseEntity<GenericWrapperResponse<LoanResponseV1>> update(@PathVariable Long id) {
-        List<LoanResponseV1> updatedDtos = service.update(id);
+    @PutMapping("{bookId}")
+    public ResponseEntity<GenericWrapperResponse<LoanResponseV1>> update(@PathVariable Long bookId) {
+        List<LoanResponseV1> updatedDtos = List.of(loanFacade.update(bookId));
         GenericWrapperResponse<LoanResponseV1> wrapperResponse = new GenericWrapperResponse<>(updatedDtos, version);
         return ResponseEntity.ok(wrapperResponse);
     }

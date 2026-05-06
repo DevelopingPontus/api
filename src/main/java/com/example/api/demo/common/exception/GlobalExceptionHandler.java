@@ -41,4 +41,13 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>("Entity not found: " + ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(BookNotOnLoanException.class)
+    public ResponseEntity<String> handleBookNotOnLoanException(BookNotOnLoanException ex){
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(BookNotFoundException.class)
+    public ResponseEntity<String> handleBookNotFoundException(BookNotFoundException ex) {
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
 }

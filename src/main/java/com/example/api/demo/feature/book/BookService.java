@@ -2,11 +2,13 @@ package com.example.api.demo.feature.book;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
+import com.example.api.demo.common.exception.BookNotFoundException;
 import com.example.api.demo.feature.author.Author;
 import com.example.api.demo.feature.author.AuthorRepository;
 import com.example.api.demo.feature.book.bookAvailability.BookAvailability;
@@ -36,8 +38,13 @@ public class BookService {
     }
 
     @Cacheable(value = "byId", key = "#id")
-    public BookResponseV1 getById(Long id) {
-        return mapper.entityToDto(repository.findById(id).orElse(null));
+    public Book getById(Long bookId) {
+        Optional<Book> book = repository.findById(bookId);
+        if (book.isPresent()) {
+            return book.get();
+        } else {
+            throw new BookNotFoundException("Book with id " + bookId + " not found.");
+        }
     }
 
     public List<BookResponseV1> save(List<BookRequestV1> dtos) {

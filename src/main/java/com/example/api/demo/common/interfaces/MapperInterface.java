@@ -1,4 +1,4 @@
-package com.example.api.demo.common.interface;
+package com.example.api.demo.common.interfaces;
 
 import java.util.List;
 

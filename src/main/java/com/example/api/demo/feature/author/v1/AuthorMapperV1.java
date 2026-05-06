@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Component;
 
-import com.example.api.demo.common.interface.MapperInterface;
+import com.example.api.demo.common.interfaces.MapperInterface;
 import com.example.api.demo.feature.author.Author;
 import com.example.api.demo.feature.book.v1.BookMapperV1;
 
