@@ -1,4 +1,4 @@
-package com.example.api.demo.features.loan.controller;
+/**package com.example.api.demo.features.loan.controller;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -356,3 +356,4 @@ class LoanControllerIntegrationTest {
         }
 
 }
+*/

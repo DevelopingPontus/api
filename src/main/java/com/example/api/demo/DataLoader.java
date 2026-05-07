@@ -1,8 +1,5 @@
 package com.example.api.demo;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
@@ -30,15 +27,14 @@ public class DataLoader implements CommandLineRunner {
     private void seedBooks() {
 
         // Seed books with availability
-        List<BookRequestV1> books = new ArrayList<>();
         BookRequestV1 book1 = new BookRequestV1("Animal Farm", "George Orwell", "12200", 1945, true);
-        books.add(book1);
         BookRequestV1 book2 = new BookRequestV1("1984", "George Orwell", "12300", 1949, true);
-        books.add(book2);
         BookRequestV1 book3 = new BookRequestV1("Brave New World", "Aldous Huxley", "12500", 1932, false);
-        books.add(book3);
 
-        bookFacade.save(books);
+        bookFacade.save(book1);
+        bookFacade.save(book2);
+        bookFacade.save(book3);
 
     }
 }
+    

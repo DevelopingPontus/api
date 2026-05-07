@@ -1,41 +1,42 @@
 package com.example.api.demo.feature.author;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
-import com.example.api.demo.feature.author.v1.AuthorMapperV1;
-import com.example.api.demo.feature.author.v1.AuthorRequestV1;
-import com.example.api.demo.feature.author.v1.AuthorResponeV1;
+import com.example.api.demo.common.exception.AuthorNotFoundException;
 
 @Service
 public class AuthorService {
 
     protected final AuthorRepository authorRepository;
-    protected final AuthorMapperV1 mapper;
 
-    protected AuthorService(AuthorRepository repository, AuthorMapperV1 mapper) {
-        this.repository = repository;
-        this.mapper = mapper;
+    protected AuthorService(AuthorRepository authorRepository) {
+        this.authorRepository = authorRepository;
     }
 
     @Cacheable(value = "all")
-    public List<AuthorResponeV1> getAll() {
-        return mapper.entityListToDtoList(repository.findAll());
+    public List<Author> getAll() {
+        if (authorRepository.findAll().isEmpty()) {
+            throw new AuthorNotFoundException("No authors were found");
+        }
+        return authorRepository.findAll();
     }
 
     @Cacheable(value = "byId", key = "#id")
-    public AuthorResponeV1 getById(Long id) {
-        return mapper.entityToDto(repository.findById(id).orElse(null));
+    public Author getById(Long id) {
+        if (authorRepository.findById(id).isPresent()) {
+            return authorRepository.findById(id).get();
+        } else {
+            throw new AuthorNotFoundException("Author with id " + id + " not found.");
+        }
     }
 
-    public Optional<Author> getByName(String name) {
-        Optional<Author> author = authorRepository.findByName(name);
-        if (author.isPresent()){
-            return author;
+    public Author getByName(String name) {
+        if (authorRepository.findByName(name) != null){
+            return authorRepository.findByName(name);
         } else {
             return null;
         }
@@ -48,14 +49,13 @@ public class AuthorService {
 
     @CacheEvict(value = "byId", allEntries = true)
     public void deleteById(Long id) {
-        repository.deleteById(id);
+        authorRepository.deleteById(id);
     }
 
     @CacheEvict(value = { "all", "byId" }, allEntries = true)
-    public List<AuthorResponeV1> update(Long id) {
-        Author entity = repository.findById(id).orElseThrow();
-        // Merge/update entity with dto data (you'll need to implement this logic)
-        Author updated = repository.save(entity);
-        return List.of(mapper.entityToDto(updated));
+    public Author update(Long authorsIdToUpdate, Author authorUpdate) {
+        Author authorToUpdate = getById(authorsIdToUpdate);
+        authorToUpdate.setName(authorUpdate.getName());
+        return authorRepository.save(authorToUpdate);
     }
 }

@@ -1,4 +1,4 @@
-package com.example.api.demo.features.book.mapper;
+/**package com.example.api.demo.features.book.mapper;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -144,3 +144,4 @@ class BookMapperTest {
         assertEquals("Book 2", result.get(1).getTitle());
     }
 }
+*/

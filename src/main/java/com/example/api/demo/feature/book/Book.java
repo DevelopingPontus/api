@@ -1,8 +1,6 @@
 package com.example.api.demo.feature.book;
 
 import com.example.api.demo.feature.author.Author;
-import com.example.api.demo.feature.book.bookAvailability.BookAvailability;
-import com.example.api.demo.feature.loan.Loan;
 
 import jakarta.persistence.*;
 
@@ -12,22 +10,14 @@ public class Book {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Version
-    private Long version;
-
     private String title;
-    @ManyToOne
+    @ManyToOne()
+    @JoinColumn(name = "author_id", nullable = false)
     private Author author;
+
     private String isbn;
     private int publishedYear;
-
-    @OneToOne(mappedBy = "book", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private BookAvailability availability;
-
-    @OneToOne(mappedBy = "book")
-    private Loan loan;
-
-    // Constructors, getters, and setters
+    private boolean available;
 
     public Book() {
     }
@@ -36,6 +26,15 @@ public class Book {
         this.title = title;
         this.isbn = isbn;
         this.publishedYear = publishedYear;
+        this.available = true;
+    }
+
+    public boolean isAvailable() {
+        return available;
+    }
+
+    public void setAvailable(boolean available) {
+        this.available = available;
     }
 
     public Long getId() {
@@ -44,14 +43,6 @@ public class Book {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public Long getVersion() {
-        return version;
-    }
-
-    public void setVersion(Long version) {
-        this.version = version;
     }
 
     public String getTitle() {
@@ -85,33 +76,4 @@ public class Book {
     public void setPublishedYear(int publishedYear) {
         this.publishedYear = publishedYear;
     }
-
-    public boolean isAvailable() {
-        return availability.isAvailable();
-    }
-
-    public void setAvailable(boolean available) {
-        if (this.availability == null) {
-            this.availability = new BookAvailability(this, available);
-        } else {
-            this.availability.setAvailable(available);
-        }
-    }
-
-    public BookAvailability getAvailability() {
-        return availability;
-    }
-
-    public void setAvailability(BookAvailability availability) {
-        this.availability = availability;
-    }
-
-    public Loan getLoan() {
-        return loan;
-    }
-
-    public void setLoan(Loan loan) {
-        this.loan = loan;
-    }
-
 }

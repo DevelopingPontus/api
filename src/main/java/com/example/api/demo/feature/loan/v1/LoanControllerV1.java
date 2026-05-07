@@ -68,8 +68,8 @@ public class LoanControllerV1 {
     @Parameter(name = "bookId", required = true, description = "ID of the book to loan")
     @ApiResponse(responseCode = "201", description = "Entity created successfully")
     @PostMapping
-    public ResponseEntity<GenericWrapperResponse<LoanResponseV1>> save(@RequestBody Long bookId) {
-        List<LoanResponseV1> savedDto = List.of(loanFacade.save(bookId));
+    public ResponseEntity<GenericWrapperResponse<LoanResponseV1>> save(@RequestBody @Validated LoanReqestV1 loanRequest) {
+        List<LoanResponseV1> savedDto = List.of(loanFacade.save(loanRequest));
         GenericWrapperResponse<LoanResponseV1> wrapperResponse = new GenericWrapperResponse<>(savedDto, version);
         return ResponseEntity.status(201).body(wrapperResponse);
     }

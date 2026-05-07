@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.api.demo.common.wrapper.GenericWrapperResponse;
 import com.example.api.demo.feature.author.AuthorFacade;
-import com.example.api.demo.feature.author.AuthorService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -66,9 +65,9 @@ public class AuthorControllerV1 {
     @ApiResponse(responseCode = "201", description = "Entity created successfully")
     @PostMapping
 
-    public ResponseEntity<GenericWrapperResponse<AuthorResponeV1>> save(@RequestBody @Validated List<AuthorRequestV1> dtos) {
-        List<AuthorResponeV1> savedDto = authorFacade.save(dtos);
-        GenericWrapperResponse<AuthorResponeV1> wrapperResponse = new GenericWrapperResponse<>(savedDto, version);
+    public ResponseEntity<GenericWrapperResponse<AuthorResponeV1>> save(@RequestBody @Validated AuthorRequestV1 authorRequests) {
+        List<AuthorResponeV1> savedAuthor = List.of(authorFacade.save(authorRequests));
+        GenericWrapperResponse<AuthorResponeV1> wrapperResponse = new GenericWrapperResponse<>(savedAuthor, version);
         return ResponseEntity.status(201).body(wrapperResponse);
     }
 
@@ -87,9 +86,9 @@ public class AuthorControllerV1 {
     @ApiResponse(responseCode = "200", description = "Entity updated successfully")
     @PutMapping("{id}")
 
-    public ResponseEntity<GenericWrapperResponse<AuthorResponeV1>> update(@PathVariable Long id) {
-        List<AuthorResponeV1> updatedDtos = authorFacade.update(id);
-        GenericWrapperResponse<AuthorResponeV1> wrapperResponse = new GenericWrapperResponse<>(updatedDtos, version);
+    public ResponseEntity<GenericWrapperResponse<AuthorResponeV1>> update(@PathVariable Long id, @RequestBody @Validated AuthorRequestV1 authorRequest) {
+        List<AuthorResponeV1> updatedAuthor = List.of(authorFacade.update(id, authorRequest));
+        GenericWrapperResponse<AuthorResponeV1> wrapperResponse = new GenericWrapperResponse<>(updatedAuthor, version);
         return ResponseEntity.ok(wrapperResponse);
     }
 

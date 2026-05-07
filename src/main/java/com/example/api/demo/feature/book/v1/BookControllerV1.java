@@ -6,7 +6,6 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.example.api.demo.common.wrapper.GenericWrapperResponse;
@@ -61,8 +60,8 @@ public class BookControllerV1 {
     @Parameter(name = "bookId", required = true, description = "ID of the book to book")
     @ApiResponse(responseCode = "201", description = "Entity created successfully")
     @PostMapping
-    public ResponseEntity<GenericWrapperResponse<BookResponseV1>> save(@RequestBody List<BookRequestV1> bookRequest) {
-        List<BookResponseV1> savedDto = bookFacade.save(bookRequest);
+    public ResponseEntity<GenericWrapperResponse<BookResponseV1>> save(@RequestBody BookRequestV1 bookRequest) {
+        List<BookResponseV1> savedDto = List.of(bookFacade.save(bookRequest));
         GenericWrapperResponse<BookResponseV1> wrapperResponse = new GenericWrapperResponse<>(savedDto, version);
         return ResponseEntity.status(201).body(wrapperResponse);
     }

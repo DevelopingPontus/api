@@ -1,10 +1,12 @@
 package com.example.api.demo.feature.author;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.example.api.demo.feature.book.Book;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -22,7 +24,7 @@ public class Author {
     @NotBlank
     private String name;
 
-    @OneToMany(mappedBy = "author")
+    @OneToMany(mappedBy = "author", fetch = FetchType.EAGER)
     private List<Book> books;
 
     public Author() {
@@ -31,7 +33,7 @@ public class Author {
 
     public Author(@NotBlank String name) {
         this.name = name;
-        this.books = List.of();
+        this.books = new ArrayList<>();
     }
 
     public Long getId() {
