@@ -1,4 +1,4 @@
-/**package com.example.api.demo.features.book.controller;
+package com.example.api.demo.features.book.controller;
 
 import com.example.api.demo.common.wrapper.GenericWrapperResponse;
 import com.example.api.demo.feature.book.v1.BookRequestV1;
@@ -53,8 +53,8 @@ class BookControllerIntegrationTest {
                         }
                 });
 
-                List<BookRequestV1> bookRequest = List
-                                .of(new BookRequestV1("Clean Code", "Robert C. Martin", "978-0132350884", 2008, true));
+                BookRequestV1 bookRequest = new BookRequestV1("Clean Code", "Robert C. Martin", "978-0132350884", 2008,
+                                true);
 
                 savedBook = restTemplate.exchange(
                                 baseUrl,
@@ -98,24 +98,6 @@ class BookControllerIntegrationTest {
                 assertEquals("Robert C. Martin", createdBook.author());
                 assertEquals("978-0132350884", createdBook.isbn());
                 assertEquals(2008, createdBook.publishedYear());
-        }
-
-        @Test
-        @DisplayName("Should create multiple books in sequence")
-        void testCreateMultipleBooks() {
-                List<BookRequestV1> book1 = List.of(
-                                new BookRequestV1("The Pragmatic Programmer", "David Thomas", "978-0201616224", 1999, true),
-                                new BookRequestV1("Design Patterns", "Gang of Four", "978-0201633610", 1994, true));
-
-                ResponseEntity<GenericWrapperResponse<BookResponseV1>> response1 = restTemplate.exchange(
-                                baseUrl,
-                                org.springframework.http.HttpMethod.POST,
-                                new HttpEntity<>(book1),
-                                new ParameterizedTypeReference<GenericWrapperResponse<BookResponseV1>>() {
-                                });
-
-                assertEquals(HttpStatus.CREATED, response1.getStatusCode());
-
         }
 
         // ============ GET BY ID TESTS ============
@@ -329,4 +311,3 @@ class BookControllerIntegrationTest {
                                 "Should have at least 2 books");
         }
 }
-        */

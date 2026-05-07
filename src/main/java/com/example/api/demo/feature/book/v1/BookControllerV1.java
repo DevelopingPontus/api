@@ -40,7 +40,7 @@ public class BookControllerV1 {
     @Parameter(name = "bookId", required = true, description = "ID of the book to retrieve")
     @ApiResponse(responseCode = "200", description = "Successfully retrieved the book")
     @ApiResponse(responseCode = "404", description = "Book not found")
-    @GetMapping("{bookId}")
+    @GetMapping("/{bookId}")
     public ResponseEntity<GenericWrapperResponse<BookResponseV1>> getById(@PathVariable Long bookId) {
         List<BookResponseV1> singleList = List.of(bookFacade.getById(bookId));
         GenericWrapperResponse<BookResponseV1> wrapperResponse = new GenericWrapperResponse<>(singleList, version);
