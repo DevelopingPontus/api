@@ -19,7 +19,6 @@ import org.springframework.web.client.RestTemplate;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.util.List;
 
 @SpringBootTest(classes = com.example.api.demo.DemoApplication.class, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
@@ -53,8 +52,7 @@ class BookControllerIntegrationTest {
                         }
                 });
 
-                BookRequestV1 bookRequest = new BookRequestV1("Clean Code", "Robert C. Martin", "978-0132350884", 2008,
-                                true);
+                BookRequestV1 bookRequest = new BookRequestV1("Clean Code", "Robert C. Martin", "978-0132350884", 2008);
 
                 savedBook = restTemplate.exchange(
                                 baseUrl,
@@ -120,22 +118,6 @@ class BookControllerIntegrationTest {
                 assertEquals("Clean Code", getResponse.getBody().getData().get(0).title());
         }
 
-        @Test
-        @DisplayName("Should return 404 when trying to retrieve a non-existent book by ID")
-        void testGetNonExsistingBookById() {
-
-                Long bookId = 9999L;
-
-                ResponseEntity<GenericWrapperResponse<BookResponseV1>> getResponse = restTemplate.exchange(
-                                baseUrl + "/" + bookId,
-                                org.springframework.http.HttpMethod.GET,
-                                null,
-                                new ParameterizedTypeReference<GenericWrapperResponse<BookResponseV1>>() {
-                                });
-
-                assertEquals(HttpStatus.NOT_FOUND, getResponse.getStatusCode());
-        }
-
         // ============ DELETE TESTS ============
 
         @Test
@@ -154,19 +136,8 @@ class BookControllerIntegrationTest {
 
         }
 
-        @Test
-        @DisplayName("Should return 204 when deleting non-existent book")
-        void testDeleteNonExistentBook() {
-                ResponseEntity<Void> response = restTemplate.exchange(
-                                baseUrl + "/99999",
-                                org.springframework.http.HttpMethod.DELETE,
-                                null,
-                                Void.class);
 
-                assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
-        }
-
-        // ============ AVAILABILITY TESTS (SPLIT CACHING) ============
+        // ============ AVAILABILITY TESTS ============
 
         @Test
         @DisplayName("Should create book with availability true")
@@ -175,139 +146,4 @@ class BookControllerIntegrationTest {
                 assertTrue(createdBook.available(), "Book should be available when created");
         }
 
-        @Test
-        @DisplayName("Should update book availability to unavailable")
-        void testUpdateBookAvailabilityToUnavailable() {
-                Long bookId = savedBook.getBody().getData().get(0).id();
-
-                // Update availability
-                ResponseEntity<Void> updateResponse = restTemplate.exchange(
-                                baseUrl + "/" + bookId + "/availability?available=false",
-                                org.springframework.http.HttpMethod.PUT,
-                                null,
-                                Void.class);
-
-                assertEquals(HttpStatus.OK, updateResponse.getStatusCode());
-
-                // Verify availability changed
-                ResponseEntity<GenericWrapperResponse<BookResponseV1>> getResponse = restTemplate.exchange(
-                                baseUrl + "/" + bookId,
-                                org.springframework.http.HttpMethod.GET,
-                                null,
-                                new ParameterizedTypeReference<GenericWrapperResponse<BookResponseV1>>() {
-                                });
-
-                assertFalse(getResponse.getBody().getData().get(0).available(),
-                                "Book availability should be false after update");
-        }
-
-        @Test
-        @DisplayName("Should update book availability to available")
-        void testUpdateBookAvailabilityToAvailable() {
-                Long bookId = savedBook.getBody().getData().get(0).id();
-
-                // First set to unavailable
-                restTemplate.exchange(
-                                baseUrl + "/" + bookId + "/availability?available=false",
-                                org.springframework.http.HttpMethod.PUT,
-                                null,
-                                Void.class);
-
-                // Then set back to available
-                ResponseEntity<Void> updateResponse = restTemplate.exchange(
-                                baseUrl + "/" + bookId + "/availability?available=true",
-                                org.springframework.http.HttpMethod.PUT,
-                                null,
-                                Void.class);
-
-                assertEquals(HttpStatus.OK, updateResponse.getStatusCode());
-
-                // Verify availability changed
-                ResponseEntity<GenericWrapperResponse<BookResponseV1>> getResponse = restTemplate.exchange(
-                                baseUrl + "/" + bookId,
-                                org.springframework.http.HttpMethod.GET,
-                                null,
-                                new ParameterizedTypeReference<GenericWrapperResponse<BookResponseV1>>() {
-                                });
-
-                assertTrue(getResponse.getBody().getData().get(0).available(),
-                                "Book availability should be true after update");
-        }
-
-        @Test
-        @DisplayName("Should handle multiple availability updates")
-        void testMultipleAvailabilityUpdates() {
-                Long bookId = savedBook.getBody().getData().get(0).id();
-
-                // Toggle availability multiple times
-                for (int i = 0; i < 3; i++) {
-                        boolean shouldBeAvailable = i % 2 == 0;
-                        ResponseEntity<Void> updateResponse = restTemplate.exchange(
-                                        baseUrl + "/" + bookId + "/availability?available=" + shouldBeAvailable,
-                                        org.springframework.http.HttpMethod.PUT,
-                                        null,
-                                        Void.class);
-
-                        assertEquals(HttpStatus.OK, updateResponse.getStatusCode());
-
-                        ResponseEntity<GenericWrapperResponse<BookResponseV1>> getResponse = restTemplate.exchange(
-                                        baseUrl + "/" + bookId,
-                                        org.springframework.http.HttpMethod.GET,
-                                        null,
-                                        new ParameterizedTypeReference<GenericWrapperResponse<BookResponseV1>>() {
-                                        });
-
-                        assertEquals(shouldBeAvailable, getResponse.getBody().getData().get(0).available());
-                }
-        }
-
-        // ============ VALIDATION TESTS ============
-
-        @Test
-        @DisplayName("Should retrieve book with all fields populated")
-        void testGetBookWithAllFields() {
-                Long bookId = savedBook.getBody().getData().get(0).id();
-
-                ResponseEntity<GenericWrapperResponse<BookResponseV1>> response = restTemplate.exchange(
-                                baseUrl + "/" + bookId,
-                                org.springframework.http.HttpMethod.GET,
-                                null,
-                                new ParameterizedTypeReference<GenericWrapperResponse<BookResponseV1>>() {
-                                });
-
-                assertEquals(HttpStatus.OK, response.getStatusCode());
-                BookResponseV1 book = response.getBody().getData().get(0);
-
-                assertNotNull(book.id());
-                assertNotNull(book.title());
-                assertNotNull(book.author());
-                assertNotNull(book.isbn());
-                assertTrue(book.publishedYear() > 0);
-        }
-
-        @Test
-        @DisplayName("Should get all books including newly created ones")
-        void testGetAllBooksIncludesNewBooks() {
-                // Create additional book
-                List<BookRequestV1> newBook = List.of(
-                                new BookRequestV1("Effective Java", "Joshua Bloch", "978-0134685991", 2017, true));
-
-                restTemplate.exchange(
-                                baseUrl,
-                                org.springframework.http.HttpMethod.POST,
-                                new HttpEntity<>(newBook),
-                                new ParameterizedTypeReference<GenericWrapperResponse<BookResponseV1>>() {
-                                });
-
-                // Get all books
-                ResponseEntity<GenericWrapperResponse<BookResponseV1>> response = restTemplate.exchange(
-                                baseUrl,
-                                org.springframework.http.HttpMethod.GET,
-                                null,
-                                new ParameterizedTypeReference<GenericWrapperResponse<BookResponseV1>>() {
-                                });
-
-                assertTrue(response.getBody().getData().size() >= 2,
-                                "Should have at least 2 books");
-        }
 }

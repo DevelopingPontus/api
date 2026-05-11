@@ -21,28 +21,23 @@ public class AuthorFacade {
         this.authorMapper = authorMapper;
     }
 
-    @Cacheable(value = "all")
     public List<AuthorResponeV1> getAll() {
         return authorMapper.entityListToDtoList(authorService.getAll());
     }
 
-    @Cacheable(value = "byId", key = "#id")
     public AuthorResponeV1 getById(Long id) {
         return authorMapper.entityToDto(authorService.getById(id));
     }
 
-    @CacheEvict(value = { "all", "byId" }, allEntries = true)
     public AuthorResponeV1 save(AuthorRequestV1 authorRequest) {
         Author author = authorMapper.dtoToEntity(authorRequest);
         return authorMapper.entityToDto(authorService.save(author));
     }
 
-    @CacheEvict(value = "byId", allEntries = true)
     public void deleteById(Long id) {
         authorService.deleteById(id);
     }
 
-    @CacheEvict(value = { "all", "byId" }, allEntries = true)
     public AuthorResponeV1 update(Long id, AuthorRequestV1 authorRequest) {
         Author author = authorMapper.dtoToEntity(authorRequest);
         return authorMapper.entityToDto(authorService.update(id, author));

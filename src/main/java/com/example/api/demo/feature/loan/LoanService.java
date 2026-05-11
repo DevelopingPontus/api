@@ -4,6 +4,8 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import com.example.api.demo.common.exception.BookNotOnLoanException;
@@ -23,6 +25,7 @@ public class LoanService {
         this.bookService = bookService;
     }
 
+    @Cacheable(value = "loan")
     public List<Loan> getAll() {
         List<Loan> loans = loanRepository.findAll();
         if (!loans.isEmpty()) {
@@ -32,6 +35,7 @@ public class LoanService {
         }
     }
 
+    @Cacheable(value = "loan", key = "#bookId")
     public Loan getById(Long loanId) {
         Optional<Loan> loan = loanRepository.findById(loanId);
         if (loan.isPresent()) {
@@ -41,8 +45,9 @@ public class LoanService {
         }
     }
 
-    public void deleteById(Long id) {
-        loanRepository.deleteById(id);
+    @CacheEvict(value = "loan", key = "#bookId")
+    public void deleteById(Long bookId) {
+        loanRepository.deleteById(bookId);
     }
 
     public Loan save(Long bookId) {
@@ -56,6 +61,7 @@ public class LoanService {
         return newLoan;
     }
 
+    @CacheEvict(value = "loan", key = "#bookId")
     public Loan update(Long bookId) {
         Loan loan = loanRepository.findLastByBookId(bookId);
         if (loan.getRetunDate() == null) {

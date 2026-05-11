@@ -1,11 +1,13 @@
 package com.example.api.demo.feature.book.v1;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.constraints.Positive;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.example.api.demo.common.wrapper.GenericWrapperResponse;
@@ -29,7 +31,6 @@ public class BookControllerV1 {
     @Operation(summary = "Get all books", description = "Retrieve a list of all books")
     @ApiResponse(responseCode = "200", description = "Successfully retrieved the list of books")
     @GetMapping
-
     public ResponseEntity<GenericWrapperResponse<BookResponseV1>> getAll() {
         List<BookResponseV1> entities = bookFacade.getAll();
         GenericWrapperResponse<BookResponseV1> wrapperResponse = new GenericWrapperResponse<>(entities, version);
@@ -41,7 +42,7 @@ public class BookControllerV1 {
     @ApiResponse(responseCode = "200", description = "Successfully retrieved the book")
     @ApiResponse(responseCode = "404", description = "Book not found")
     @GetMapping("/{bookId}")
-    public ResponseEntity<GenericWrapperResponse<BookResponseV1>> getById(@PathVariable Long bookId) {
+    public ResponseEntity<GenericWrapperResponse<BookResponseV1>> getById(@PathVariable @Positive Long bookId) {
         List<BookResponseV1> singleList = List.of(bookFacade.getById(bookId));
         GenericWrapperResponse<BookResponseV1> wrapperResponse = new GenericWrapperResponse<>(singleList, version);
         return ResponseEntity.ok(wrapperResponse);
@@ -50,27 +51,27 @@ public class BookControllerV1 {
     @Operation(summary = "Delete book by it's ID", description = "Delete a book")
     @Parameter(name = "bookId", required = true, description = "ID of the book to delete")
     @ApiResponse(responseCode = "204", description = "book deleted successfully")
-    @DeleteMapping("{bookId}")
-    public ResponseEntity<Void> deleteById(@PathVariable Long bookId) {
+    @DeleteMapping("/{bookId}")
+    public ResponseEntity<Void> deleteById(@PathVariable @Positive Long bookId) {
         bookFacade.deleteById(bookId);
         return ResponseEntity.noContent().build();
     }
 
-    @Operation(summary = "Make book with Book Id", description = "Create a new book")
-    @Parameter(name = "bookId", required = true, description = "ID of the book to book")
+    @Operation(summary = "Create book", description = "Create a new book")
     @ApiResponse(responseCode = "201", description = "Entity created successfully")
     @PostMapping
-    public ResponseEntity<GenericWrapperResponse<BookResponseV1>> save(@RequestBody BookRequestV1 bookRequest) {
+    public ResponseEntity<GenericWrapperResponse<BookResponseV1>> save(@RequestBody @Validated BookRequestV1 bookRequest) {
         List<BookResponseV1> savedDto = List.of(bookFacade.save(bookRequest));
         GenericWrapperResponse<BookResponseV1> wrapperResponse = new GenericWrapperResponse<>(savedDto, version);
         return ResponseEntity.status(201).body(wrapperResponse);
     }
 
-    @Operation(summary = "Return book by Book Id", description = "Uses Book Id to return book if book is on book")
+    @Operation(summary = "Update book by Book Id", description = "Uses Book Id to update book.")
     @Parameter(name = "bookId", required = true, description = "ID of the book to return")
     @ApiResponse(responseCode = "200", description = "Entity updated successfully")
-    @PutMapping("{bookId}")
-    public ResponseEntity<GenericWrapperResponse<BookResponseV1>> update(Long bookId, @RequestBody BookRequestV1 bookRequest) {
+    @PutMapping("/{bookId}")
+    public ResponseEntity<GenericWrapperResponse<BookResponseV1>> update(@PathVariable @Positive Long bookId,
+            @RequestBody @Validated BookRequestV1 bookRequest) {
         List<BookResponseV1> updatedDtos = List.of(bookFacade.update(bookId, bookRequest));
         GenericWrapperResponse<BookResponseV1> wrapperResponse = new GenericWrapperResponse<>(updatedDtos, version);
         return ResponseEntity.ok(wrapperResponse);

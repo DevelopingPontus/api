@@ -2,6 +2,8 @@ package com.example.api.demo.feature.book;
 
 import java.util.List;
 
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import com.example.api.demo.common.exception.BookNotFoundException;
@@ -14,6 +16,7 @@ public class BookService {
         this.bookRepository = bookRepository;
     }
 
+    @Cacheable(value = "book")
     public List<Book> getAll() {
         if (bookRepository.findAll().isEmpty()) {
             throw new BookNotFoundException("No books were found");
@@ -21,6 +24,7 @@ public class BookService {
         return bookRepository.findAll();
     }
 
+    @Cacheable(value = "book", key = "#bookId")
     public Book getById(Long bookId) {
         if (bookRepository.findById(bookId).isPresent()) {
             return bookRepository.findById(bookId).get();
@@ -33,11 +37,13 @@ public class BookService {
         return bookRepository.save(book);
     }
 
-    public void deleteById(Long id) {
-        getById(id);
-        bookRepository.deleteById(id);
+    @CacheEvict(value = "book", key = "#bookId")
+    public void deleteById(Long bookId) {
+        getById(bookId);
+        bookRepository.deleteById(bookId);
     }
 
+    @CacheEvict(value = "book", key = "#book.getId()")
     public Book update(Book book) {
         return bookRepository.save(book);
     }

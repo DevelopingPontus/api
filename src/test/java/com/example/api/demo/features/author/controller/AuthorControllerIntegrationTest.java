@@ -1,10 +1,9 @@
-/**package com.example.api.demo.features.author.controller;
+package com.example.api.demo.features.author.controller;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -58,8 +57,7 @@ class AuthorControllerIntegrationTest {
                         }
                 });
 
-                List<BookRequestV1> bookRequest = List
-                                .of(new BookRequestV1("Clean Code", "Robert C. Martin", "978-0132350884", 2008, true));
+                BookRequestV1 bookRequest = new BookRequestV1("Clean Code", "Robert C. Martin", "978-0132350884", 2008);
 
                 savedBook = restTemplate.exchange(
                                 booksUrl,
@@ -152,4 +150,3 @@ class AuthorControllerIntegrationTest {
                 assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
         }
 }
-        */

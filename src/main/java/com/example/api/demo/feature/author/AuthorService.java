@@ -17,7 +17,7 @@ public class AuthorService {
         this.authorRepository = authorRepository;
     }
 
-    @Cacheable(value = "all")
+    @Cacheable(value = "author")
     public List<Author> getAll() {
         if (authorRepository.findAll().isEmpty()) {
             throw new AuthorNotFoundException("No authors were found");
@@ -25,7 +25,7 @@ public class AuthorService {
         return authorRepository.findAll();
     }
 
-    @Cacheable(value = "byId", key = "#id")
+    @Cacheable(value = "author", key = "#id")
     public Author getById(Long id) {
         if (authorRepository.findById(id).isPresent()) {
             return authorRepository.findById(id).get();
@@ -42,17 +42,17 @@ public class AuthorService {
         }
     }
 
-    @CacheEvict(value = { "all", "byId" }, allEntries = true)
+    @CacheEvict(value = "author", allEntries = true)
     public Author save(Author author) {
         return authorRepository.save(author);
     }
 
-    @CacheEvict(value = "byId", allEntries = true)
+    @CacheEvict(value = "author", key = "#id")
     public void deleteById(Long id) {
         authorRepository.deleteById(id);
     }
 
-    @CacheEvict(value = { "all", "byId" }, allEntries = true)
+    @CacheEvict(value = "author", key = "#authorsIdToUpdate")
     public Author update(Long authorsIdToUpdate, Author authorUpdate) {
         Author authorToUpdate = getById(authorsIdToUpdate);
         authorToUpdate.setName(authorUpdate.getName());
