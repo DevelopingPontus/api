@@ -1,4 +1,4 @@
-package com.example.api.demo.common.configuration;
+/**package com.example.api.demo.common.configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -40,3 +40,4 @@ public class SecurityConfig {
     }
 
 }
+*/

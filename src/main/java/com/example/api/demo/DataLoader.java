@@ -1,15 +1,32 @@
 package com.example.api.demo;
 
+import java.util.Collections;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
+import org.springframework.vault.authentication.ClientAuthentication;
+import org.springframework.vault.authentication.TokenAuthentication;
+import org.springframework.vault.client.VaultEndpoint;
+import org.springframework.vault.core.VaultKeyValueOperations;
+import org.springframework.vault.core.VaultKeyValueOperationsSupport;
+import org.springframework.vault.core.VaultOperations;
+import org.springframework.vault.core.VaultTemplate;
+import org.springframework.vault.support.VaultResponse;
 
+import com.example.api.demo.common.configuration.VaultConfig;
 import com.example.api.demo.feature.book.BookFacade;
 import com.example.api.demo.feature.book.v1.BookRequestV1;
 
 @Component
 public class DataLoader implements CommandLineRunner {
 
-    private final BookFacade bookFacade;
+    @Autowired
+    private BookFacade bookFacade;
+
+    @Autowired
+    private VaultConfig vaultConfig;
 
     public DataLoader(BookFacade bookFacade) {
         this.bookFacade = bookFacade;
@@ -18,6 +35,7 @@ public class DataLoader implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         seedBooks();
+        seedUserToVault();
     }
 
     private void seedBooks() {
@@ -33,6 +51,24 @@ public class DataLoader implements CommandLineRunner {
 
     }
 
-    
+    @Autowired
+    private VaultTemplate vaultTemplate;
+
+    private void seedUserToVault() {
+        VaultKeyValueOperations keyValueOperations = vaultTemplate.opsForKeyValue("secret",
+                VaultKeyValueOperationsSupport.KeyValueBackend.KV_2);
+
+        System.out.println();
+        System.out.println("secret" + Collections.singletonMap("user",
+                "pastaword").toString());
+        System.out.println();
+
+        keyValueOperations.put("secret", Collections.singletonMap("user",
+                "pastaword"));
+
+        VaultResponse read = keyValueOperations.get("secret");
+        System.out.println(
+                read.getRequiredData().get("user"));
+    }
+
 }
-    

@@ -1,4 +1,4 @@
-package com.example.api.demo.common.configuration;
+/**package com.example.api.demo.common.configuration;
 
 import java.util.Arrays;
 
@@ -19,3 +19,4 @@ public class WebConfiguration {
         return source;
     }
 }
+*/
