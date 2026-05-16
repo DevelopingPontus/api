@@ -1,20 +1,19 @@
 package com.example.api.demo.common.configuration;
 
-import java.util.Collections;
-
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.vault.authentication.ClientAuthentication;
 import org.springframework.vault.authentication.TokenAuthentication;
 import org.springframework.vault.client.VaultEndpoint;
-import org.springframework.vault.core.VaultKeyValueOperations;
-import org.springframework.vault.core.VaultKeyValueOperationsSupport;
 import org.springframework.vault.core.VaultTemplate;
-import org.springframework.vault.support.VaultResponse;
 
 @Configuration
 public class VaultConfig {
+
+    /**
+     * Set up vault server with this CLI for testing with this token.
+     * $vault server -dev -dev-root-token-id="my-dev-root-token"
+     */
 
     @Bean
     public ClientAuthentication clientAuthentication() {
