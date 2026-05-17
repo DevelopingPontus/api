@@ -31,11 +31,9 @@ public class VaultConfig {
     }
 
     @Bean
-    public VaultTemplate vaultTemplate(VaultEndpoint vaultEndpoint, 
+    public VaultTemplate vaultTemplate(VaultEndpoint vaultEndpoint,
             ClientAuthentication auth) {
         return new VaultTemplate(vaultEndpoint, auth);
     }
-    
-
 
 }

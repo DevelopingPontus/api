@@ -3,15 +3,10 @@ package com.example.api.demo;
 import java.util.Collections;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
-import org.springframework.vault.authentication.ClientAuthentication;
-import org.springframework.vault.authentication.TokenAuthentication;
-import org.springframework.vault.client.VaultEndpoint;
 import org.springframework.vault.core.VaultKeyValueOperations;
 import org.springframework.vault.core.VaultKeyValueOperationsSupport;
-import org.springframework.vault.core.VaultOperations;
 import org.springframework.vault.core.VaultTemplate;
 import org.springframework.vault.support.VaultResponse;
 
@@ -59,16 +54,16 @@ public class DataLoader implements CommandLineRunner {
                 VaultKeyValueOperationsSupport.KeyValueBackend.KV_2);
 
         System.out.println();
-        System.out.println("secret" + Collections.singletonMap("user",
-                "pastaword").toString());
+        System.out.println("Post secret" + Collections.singletonMap("user",
+                "pastaword").toString() + " to vault");
         System.out.println();
 
         keyValueOperations.put("secret", Collections.singletonMap("user",
                 "pastaword"));
 
         VaultResponse read = keyValueOperations.get("secret");
-        System.out.println(
-                read.getRequiredData().get("user"));
+        System.out.println("Value of user password from vault [" +
+                read.getRequiredData().get("user") + "]");
     }
 
 }

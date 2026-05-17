@@ -1,5 +1,6 @@
 package com.example.api.demo.feature.author;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,7 +17,8 @@ import jakarta.validation.constraints.NotBlank;
 
 @Entity
 @Table(name = "authors")
-public class Author {
+public class Author implements Serializable{
+    private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

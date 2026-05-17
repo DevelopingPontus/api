@@ -1,12 +1,15 @@
 package com.example.api.demo.feature.book;
 
+import java.io.Serializable;
+
 import com.example.api.demo.feature.author.Author;
 
 import jakarta.persistence.*;
 
 
 @Entity
-public class Book {
+public class Book implements Serializable {
+    private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
