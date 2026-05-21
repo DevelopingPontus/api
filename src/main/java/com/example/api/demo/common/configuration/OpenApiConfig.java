@@ -5,11 +5,9 @@ import io.swagger.v3.oas.models.info.Info;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-// Spring
 @Configuration
 public class OpenApiConfig {
 
-    // Spring
     @Bean
     public OpenAPI customOpenAPI() {
         return new OpenAPI()

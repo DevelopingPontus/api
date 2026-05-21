@@ -2,8 +2,6 @@ package com.example.api.demo.feature.author;
 
 import java.util.List;
 
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
 import com.example.api.demo.feature.author.v1.AuthorMapperV1;

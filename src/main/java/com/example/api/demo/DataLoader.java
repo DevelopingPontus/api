@@ -10,7 +10,6 @@ import org.springframework.vault.core.VaultKeyValueOperationsSupport;
 import org.springframework.vault.core.VaultTemplate;
 import org.springframework.vault.support.VaultResponse;
 
-import com.example.api.demo.common.configuration.VaultConfig;
 import com.example.api.demo.feature.book.BookFacade;
 import com.example.api.demo.feature.book.v1.BookRequestV1;
 
@@ -20,8 +19,6 @@ public class DataLoader implements CommandLineRunner {
     @Autowired
     private BookFacade bookFacade;
 
-    @Autowired
-    private VaultConfig vaultConfig;
 
     public DataLoader(BookFacade bookFacade) {
         this.bookFacade = bookFacade;
@@ -49,6 +46,7 @@ public class DataLoader implements CommandLineRunner {
     @Autowired
     private VaultTemplate vaultTemplate;
 
+    // Just to show that vault can take a request and return it
     private void seedUserToVault() {
         VaultKeyValueOperations keyValueOperations = vaultTemplate.opsForKeyValue("secret",
                 VaultKeyValueOperationsSupport.KeyValueBackend.KV_2);
