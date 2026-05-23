@@ -1,12 +1,10 @@
 package com.example.api.demo;
 
-import com.example.api.demo.feature.book.v1.BookControllerV1;
 import java.util.Collections;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -20,8 +18,8 @@ import org.springframework.vault.support.VaultResponse;
 
 import com.example.api.demo.feature.book.BookFacade;
 import com.example.api.demo.feature.book.v1.BookRequestV1;
+import com.example.api.demo.feature.loan.Loan;
 
-import io.swagger.v3.oas.models.OpenAPI;
 
 @Component
 public class DataLoader implements CommandLineRunner {
@@ -94,5 +92,5 @@ public class DataLoader implements CommandLineRunner {
 
         return new InMemoryUserDetailsManager(userDetails);
     }
-    
+
 }

@@ -43,8 +43,8 @@ public class LoanFacade {
     }
 
     @Transactional
-    public LoanResponseV1 update(Long bookId) {
-        Loan loan = loanService.update(bookId);
+    public LoanResponseV1 update(Long loanId) {
+        Loan loan = loanService.update(loanId);
         return loanMapperV1.entityToDto(loan);
     }
 

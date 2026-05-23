@@ -1,5 +1,6 @@
 package com.example.api.demo.feature.loan;
 
+import com.example.api.demo.feature.book.BookRepository;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -15,14 +16,16 @@ import com.example.api.demo.feature.book.BookService;
 
 @Service
 public class LoanService {
+    private final BookRepository bookRepository;
     private final LoanRepository loanRepository;
     private final BookService bookService;
 
     public LoanService(
             LoanRepository loanRepository,
-            BookService bookService) {
+            BookService bookService, BookRepository bookRepository) {
         this.loanRepository = loanRepository;
         this.bookService = bookService;
+        this.bookRepository = bookRepository;
     }
 
     @Cacheable(value = "loan")
@@ -35,7 +38,7 @@ public class LoanService {
         }
     }
 
-    @Cacheable(value = "loan", key = "#bookId")
+    @Cacheable(value = "loan", key = "#loanId")
     public Loan getById(Long loanId) {
         Optional<Loan> loan = loanRepository.findById(loanId);
         if (loan.isPresent()) {
@@ -45,11 +48,10 @@ public class LoanService {
         }
     }
 
-    @CacheEvict(value = "loan", key = "#bookId")
-    public void deleteById(Long bookId) {
-        loanRepository.deleteById(bookId);
+    @CacheEvict(value = "loan", key = "#loanId")
+    public void deleteById(Long loanId) {
+        loanRepository.deleteById(loanId);
     }
-
 
     @CacheEvict(value = "loan", allEntries = true)
     public Loan save(Long bookId) {
@@ -63,16 +65,20 @@ public class LoanService {
         return newLoan;
     }
 
-    @CacheEvict(value = "loan", key = "#bookId")
-    public Loan update(Long bookId) {
-        Loan loan = loanRepository.findLastByBookId(bookId);
-        if (loan.getRetunDate() == null) {
+    @CacheEvict(value = "loan", key = "#loanId")
+    public Loan update(Long loanId) {
+        Optional<Loan> Loan = loanRepository.findById(loanId);
+        if (Loan.isPresent()) {
+            Loan loan = Loan.get();
             loan.setRetunDate(LocalDate.now());
             loanRepository.save(loan);
-            loan.getBook().setAvailable(true);
+            Book book = loan.getBook();
+            book.setAvailable(true);
+            bookRepository.save(book);
             return loan;
+        } else {
+            throw new LoanNotFoundException("Loan with id " + loanId + " not found.");
         }
-        throw new BookNotOnLoanException("Book with id " + bookId + " is not on loan.");
     }
 
 }

@@ -27,7 +27,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/login").permitAll()
                         .requestMatchers(HttpMethod.GET, "/**").hasRole("USER")
-                        .requestMatchers(HttpMethod.POST, "/**").hasRole("USER"))
+                        .requestMatchers(HttpMethod.POST, "/**").hasRole("USER")
+                        .requestMatchers(HttpMethod.PUT, "/api/v1/loans/**").hasRole("USER"))
                 .httpBasic(Customizer.withDefaults())
                 .formLogin(Customizer.withDefaults());
 

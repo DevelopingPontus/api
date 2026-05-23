@@ -76,13 +76,14 @@ public class LoanControllerV1 {
         return ResponseEntity.status(201).body(wrapperResponse);
     }
 
-    @Operation(summary = "Return book by Book Id", description = "Uses Book Id to return loan if book is on loan")
-    @Parameter(name = "bookId", required = true, description = "ID of the book to return")
+    @Operation(summary = "Return book by loan id", description = "Uses loan id to return loan")
+    @Parameter(name = "loanId", required = true, description = "ID of the loan to return")
     @ApiResponse(responseCode = "200", description = "Entity updated successfully")
     @ApiResponse(responseCode = "403", description = "Forbidden request for users role")
-    @PutMapping("{bookId}")
-    public ResponseEntity<GenericWrapperResponse<LoanResponseV1>> update(@PathVariable Long bookId) {
-        List<LoanResponseV1> updatedDtos = List.of(loanFacade.update(bookId));
+    @ApiResponse(responseCode = "404", description = "Loan not found")
+    @PutMapping("/{loanId}")
+    public ResponseEntity<GenericWrapperResponse<LoanResponseV1>> update(@PathVariable Long loanId) {
+        List<LoanResponseV1> updatedDtos = List.of(loanFacade.update(loanId));
         GenericWrapperResponse<LoanResponseV1> wrapperResponse = new GenericWrapperResponse<>(updatedDtos, version);
         return ResponseEntity.ok(wrapperResponse);
     }
