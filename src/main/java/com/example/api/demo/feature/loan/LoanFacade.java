@@ -6,6 +6,7 @@ import com.example.api.demo.feature.loan.v1.LoanReqestV1;
 import java.util.List;
 
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.api.demo.feature.loan.v1.LoanResponseV1;
 
@@ -30,15 +31,18 @@ public class LoanFacade {
         return loanMapperV1.entityToDto(loan);
     }
 
+    @Transactional
     public void deleteById(Long loanId) {
         loanService.deleteById(loanId);
     }
 
+    @Transactional
     public LoanResponseV1 save(LoanReqestV1 loanRequest) {
         Loan loan = loanService.save(loanRequest.bookId());
         return loanMapperV1.entityToDto(loan);
     }
 
+    @Transactional
     public LoanResponseV1 update(Long bookId) {
         Loan loan = loanService.update(bookId);
         return loanMapperV1.entityToDto(loan);

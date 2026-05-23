@@ -1,5 +1,7 @@
 package com.example.api.demo.common.configuration;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.vault.authentication.ClientAuthentication;
@@ -10,22 +12,31 @@ import org.springframework.vault.core.VaultTemplate;
 
 @Configuration
 public class VaultConfig {
+    private static final Logger logger = LoggerFactory.getLogger(VaultConfig.class);
 
-    // In production the token should not be put in the code. Use CLI $export VAULT_TOKEN="my-dev-root-token" for example.
-    String token = "my-dev-root-token";
+    private final ConfigProperties configProperties;
+
+    public VaultConfig(ConfigProperties configProperties) {
+        this.configProperties = configProperties;
+    }
+
+    @Bean
+    public String token() {
+        return configProperties.getVaultToken();
+    }
 
     @Bean
     public ClientAuthentication clientAuthentication() {
-        return new TokenAuthentication(token);
+        return new TokenAuthentication(token());
     }
 
     @Bean
     public VaultEndpoint vaultEndpoint() {
         VaultEndpoint vaultEndpoint = new VaultEndpoint();
         vaultEndpoint.setScheme("http");
-        System.out.println("----------------------------");
-        System.out.println("Vault end point: " + vaultEndpoint.toString());
-        System.out.println("----------------------------");
+        logger.info("----------------------------");
+        logger.info("Vault end point: {}", vaultEndpoint);
+        logger.info("----------------------------");
         return vaultEndpoint;
     }
 

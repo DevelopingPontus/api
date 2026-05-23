@@ -50,6 +50,8 @@ public class LoanService {
         loanRepository.deleteById(bookId);
     }
 
+
+    @CacheEvict(value = "loan", allEntries = true)
     public Loan save(Long bookId) {
         Book book = bookService.getById(bookId);
         if (!book.isAvailable()) {

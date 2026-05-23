@@ -3,7 +3,6 @@ package com.example.api.demo.common.filter;
 import io.github.bucket4j.Bucket;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -13,7 +12,6 @@ public class RateLimitingFilter implements Filter {
 
     private final Bucket bucket;
 
-    @Autowired
     public RateLimitingFilter(Bucket bucket) {
         this.bucket = bucket;
     }
@@ -26,15 +24,5 @@ public class RateLimitingFilter implements Filter {
         } else {
             ((HttpServletResponse) response).setStatus(429); // Return 429 if rate limit is exceeded
         }
-    }
-
-    @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
-        // Initialization code if needed
-    }
-
-    @Override
-    public void destroy() {
-        // Cleanup code if needed
     }
 }

@@ -22,7 +22,7 @@ class BookControllerTest {
 
     @Nested
     @WithMockUser(roles = "USER")
-    class UserTests {
+    class AuthenticatedUserTests {
 
         @Test
         void getAllBooks_shouldReturnOk() throws Exception {
@@ -34,6 +34,18 @@ class BookControllerTest {
         void getBookById_shouldReturnNotFound_whenBookDoesNotExist() throws Exception {
             mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/books/{id}", 9999L))
                     .andExpect(MockMvcResultMatchers.status().isNotFound());
+        }
+
+        @Test
+        void deleteBookById_shouldReturnForbidden_whenDeletingBookAsUser() throws Exception {
+            mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/books/1"))
+                    .andExpect(MockMvcResultMatchers.status().isForbidden());
+        }
+
+        @Test
+        void updateBookById_shouldReturnForbidden_whenUpdatingBookAsUser() throws Exception {
+            mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/books/1"))
+                    .andExpect(MockMvcResultMatchers.status().isForbidden());
         }
 
     }

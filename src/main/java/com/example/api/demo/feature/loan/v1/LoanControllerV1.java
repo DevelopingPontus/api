@@ -58,6 +58,7 @@ public class LoanControllerV1 {
     @Operation(summary = "Delete loan by it's ID", description = "Delete a loan")
     @Parameter(name = "loanId", required = true, description = "ID of the loan to delete")
     @ApiResponse(responseCode = "204", description = "Loan deleted successfully")
+    @ApiResponse(responseCode = "403", description = "Forbidden request for users role")
     @DeleteMapping("{loanId}")
     public ResponseEntity<Void> deleteById(@PathVariable Long loanId) {
         loanFacade.deleteById(loanId);
@@ -67,6 +68,7 @@ public class LoanControllerV1 {
     @Operation(summary = "Make loan with Book Id", description = "Create a new loan")
     @Parameter(name = "bookId", required = true, description = "ID of the book to loan")
     @ApiResponse(responseCode = "201", description = "Entity created successfully")
+    @ApiResponse(responseCode = "403", description = "Forbidden request for users role")
     @PostMapping
     public ResponseEntity<GenericWrapperResponse<LoanResponseV1>> save(@RequestBody @Validated LoanReqestV1 loanRequest) {
         List<LoanResponseV1> savedDto = List.of(loanFacade.save(loanRequest));
@@ -77,6 +79,7 @@ public class LoanControllerV1 {
     @Operation(summary = "Return book by Book Id", description = "Uses Book Id to return loan if book is on loan")
     @Parameter(name = "bookId", required = true, description = "ID of the book to return")
     @ApiResponse(responseCode = "200", description = "Entity updated successfully")
+    @ApiResponse(responseCode = "403", description = "Forbidden request for users role")
     @PutMapping("{bookId}")
     public ResponseEntity<GenericWrapperResponse<LoanResponseV1>> update(@PathVariable Long bookId) {
         List<LoanResponseV1> updatedDtos = List.of(loanFacade.update(bookId));

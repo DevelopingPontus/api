@@ -63,6 +63,7 @@ public class AuthorControllerV1 {
 
     @Operation(summary = "Save a new entity", description = "Create a new entity")
     @ApiResponse(responseCode = "201", description = "Entity created successfully")
+    @ApiResponse(responseCode = "403", description = "Forbidden request for users role")
     @PostMapping
 
     public ResponseEntity<GenericWrapperResponse<AuthorResponeV1>> save(@RequestBody @Validated AuthorRequestV1 authorRequests) {
@@ -74,6 +75,7 @@ public class AuthorControllerV1 {
     @Operation(summary = "Delete an entity by ID", description = "Delete an entity by its ID")
     @Parameter(name = "id", required = true, description = "ID of the entity to delete")
     @ApiResponse(responseCode = "204", description = "Entity deleted successfully")
+    @ApiResponse(responseCode = "403", description = "Forbidden request for users role")
     @DeleteMapping("{id}")
 
     public ResponseEntity<Void> deleteById(@PathVariable Long id) {
@@ -84,6 +86,7 @@ public class AuthorControllerV1 {
     @Operation(summary = "Update an entity by ID", description = "Update an entity by its ID. Only implemented for Loan entities.")
     @Parameter(name = "id", required = true, description = "ID of the entity to update")
     @ApiResponse(responseCode = "200", description = "Entity updated successfully")
+    @ApiResponse(responseCode = "403", description = "Forbidden request for users role")
     @PutMapping("{id}")
 
     public ResponseEntity<GenericWrapperResponse<AuthorResponeV1>> update(@PathVariable Long id, @RequestBody @Validated AuthorRequestV1 authorRequest) {

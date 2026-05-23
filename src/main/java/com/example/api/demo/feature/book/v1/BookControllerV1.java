@@ -2,6 +2,7 @@ package com.example.api.demo.feature.book.v1;
 
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.PositiveOrZero;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -42,7 +43,7 @@ public class BookControllerV1 {
     @ApiResponse(responseCode = "200", description = "Successfully retrieved the book")
     @ApiResponse(responseCode = "404", description = "Book not found")
     @GetMapping("/{bookId}")
-    public ResponseEntity<GenericWrapperResponse<BookResponseV1>> getById(@PathVariable @Positive Long bookId) {
+    public ResponseEntity<GenericWrapperResponse<BookResponseV1>> getById(@PathVariable @PositiveOrZero Long bookId) {
         List<BookResponseV1> singleList = List.of(bookFacade.getById(bookId));
         GenericWrapperResponse<BookResponseV1> wrapperResponse = new GenericWrapperResponse<>(singleList, version);
         return ResponseEntity.ok(wrapperResponse);
@@ -51,6 +52,7 @@ public class BookControllerV1 {
     @Operation(summary = "Delete book by it's ID", description = "Delete a book")
     @Parameter(name = "bookId", required = true, description = "ID of the book to delete")
     @ApiResponse(responseCode = "204", description = "book deleted successfully")
+    @ApiResponse(responseCode = "403", description = "Forbidden request for users role")
     @DeleteMapping("/{bookId}")
     public ResponseEntity<Void> deleteById(@PathVariable @Positive Long bookId) {
         bookFacade.deleteById(bookId);
@@ -59,6 +61,7 @@ public class BookControllerV1 {
 
     @Operation(summary = "Create book", description = "Create a new book")
     @ApiResponse(responseCode = "201", description = "Entity created successfully")
+    @ApiResponse(responseCode = "403", description = "Forbidden request for users role")
     @PostMapping
     public ResponseEntity<GenericWrapperResponse<BookResponseV1>> save(@RequestBody @Validated BookRequestV1 bookRequest) {
         List<BookResponseV1> savedDto = List.of(bookFacade.save(bookRequest));
@@ -69,6 +72,7 @@ public class BookControllerV1 {
     @Operation(summary = "Update book by Book Id", description = "Uses Book Id to update book.")
     @Parameter(name = "bookId", required = true, description = "ID of the book to return")
     @ApiResponse(responseCode = "200", description = "Entity updated successfully")
+    @ApiResponse(responseCode = "403", description = "Forbidden request for users role")
     @PutMapping("/{bookId}")
     public ResponseEntity<GenericWrapperResponse<BookResponseV1>> update(@PathVariable @Positive Long bookId,
             @RequestBody @Validated BookRequestV1 bookRequest) {

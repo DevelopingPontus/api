@@ -3,6 +3,7 @@ package com.example.api.demo.feature.book;
 import java.util.List;
 
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.api.demo.feature.author.Author;
 import com.example.api.demo.feature.author.AuthorService;
@@ -33,34 +34,37 @@ public class BookFacade {
         return bookMapper.entityToDto(book);
     }
 
+    @Transactional
     public BookResponseV1 save(BookRequestV1 bookRequest) {
         Book newBook;
-            Author author = authorService.getByName(bookRequest.author());
-            if (author == null) {
-                Author newAuthor = new Author(bookRequest.author());
-                newBook = bookMapper.dtoToEntity(bookRequest);
-                newBook.setAuthor(newAuthor);
-                List<Book> books = newAuthor.getBooks();
-                books.add(newBook);
-                newAuthor.setBooks(books);
-                authorService.save(newAuthor);
-                bookService.save(newBook);
-            } else {
-                newBook = bookMapper.dtoToEntity(bookRequest);
-                newBook.setAuthor(author);
-                List<Book> books = author.getBooks();
-                books.add(newBook);
-                author.setBooks(books);
-                authorService.save(author);
-                bookService.save(newBook);
-            }
+        Author author = authorService.getByName(bookRequest.author());
+        if (author == null) {
+            Author newAuthor = new Author(bookRequest.author());
+            newBook = bookMapper.dtoToEntity(bookRequest);
+            newBook.setAuthor(newAuthor);
+            List<Book> books = newAuthor.getBooks();
+            books.add(newBook);
+            newAuthor.setBooks(books);
+            authorService.save(newAuthor);
+            bookService.save(newBook);
+        } else {
+            newBook = bookMapper.dtoToEntity(bookRequest);
+            newBook.setAuthor(author);
+            List<Book> books = author.getBooks();
+            books.add(newBook);
+            author.setBooks(books);
+            authorService.save(author);
+            bookService.save(newBook);
+        }
         return bookMapper.entityToDto(newBook);
     }
 
+    @Transactional
     public void deleteById(Long id) {
         bookService.deleteById(id);
     }
 
+    @Transactional
     public BookResponseV1 update(Long id, BookRequestV1 bookRequest) {
         Book book = bookService.getById(id);
         book.setTitle(bookRequest.title());

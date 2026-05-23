@@ -33,7 +33,7 @@ public class GlobalExceptionHandler {
     // General Exception
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> handleGeneralException(Exception ex) {
-        return new ResponseEntity<>("An error occurred: " + ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>("An error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(NoSuchElementException.class)
@@ -42,7 +42,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(BookNotOnLoanException.class)
-    public ResponseEntity<String> handleBookNotOnLoanException(BookNotOnLoanException ex){
+    public ResponseEntity<String> handleBookNotOnLoanException(BookNotOnLoanException ex) {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
