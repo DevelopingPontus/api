@@ -47,7 +47,7 @@ public class AuthorService {
         return authorRepository.save(author);
     }
 
-    @CacheEvict(value = "author", key = "#id")
+    @CacheEvict(value = "author", allEntries = true)
     public void deleteById(Long id) {
         authorRepository.deleteById(id);
     }

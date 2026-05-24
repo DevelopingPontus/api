@@ -76,7 +76,7 @@ public class AuthorControllerV1 {
     @Parameter(name = "id", required = true, description = "ID of the entity to delete")
     @ApiResponse(responseCode = "204", description = "Entity deleted successfully")
     @ApiResponse(responseCode = "403", description = "Forbidden request for users role")
-    @DeleteMapping("{id}")
+    @DeleteMapping("/{id}")
 
     public ResponseEntity<Void> deleteById(@PathVariable Long id) {
         authorFacade.deleteById(id);

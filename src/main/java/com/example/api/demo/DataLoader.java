@@ -5,11 +5,6 @@ import java.util.Collections;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.stereotype.Component;
 import org.springframework.vault.core.VaultKeyValueOperations;
 import org.springframework.vault.core.VaultKeyValueOperationsSupport;
@@ -18,7 +13,6 @@ import org.springframework.vault.support.VaultResponse;
 
 import com.example.api.demo.feature.book.BookFacade;
 import com.example.api.demo.feature.book.v1.BookRequestV1;
-import com.example.api.demo.feature.loan.Loan;
 
 
 @Component
@@ -28,12 +22,10 @@ public class DataLoader implements CommandLineRunner {
 
     private BookFacade bookFacade;
     private VaultTemplate vaultTemplate;
-    private PasswordEncoder passwordEncoder;
 
-    public DataLoader(BookFacade bookFacade, VaultTemplate vaultTemplate, PasswordEncoder passwordEncoder) {
+    public DataLoader(BookFacade bookFacade, VaultTemplate vaultTemplate) {
         this.bookFacade = bookFacade;
         this.vaultTemplate = vaultTemplate;
-        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -75,22 +67,11 @@ public class DataLoader implements CommandLineRunner {
             if (read != null) {
                 Object password = read.getRequiredData().get("password");
                 logger.info("Value of user password read from vault [{}]", password);
-                userDetailsService(passwordEncoder, password);
             }
         } catch (Exception _) {
             logger.warn("Error while seeding user to vault");
         }
     }
     
-
-    public UserDetailsService userDetailsService(PasswordEncoder passwordEncoder, Object password) {
-        UserDetails userDetails = User.builder()
-                .username("user")
-                .password(passwordEncoder.encode(password.toString()))
-                .roles("USER")
-                .build();
-
-        return new InMemoryUserDetailsManager(userDetails);
-    }
 
 }

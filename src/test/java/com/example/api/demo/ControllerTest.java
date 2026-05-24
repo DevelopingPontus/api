@@ -23,7 +23,7 @@ class ControllerTest {
     @Nested
     @WithMockUser(roles = "USER")
     class AuthenticatedUserTests {
-
+        // Books -----------------------
         @Test
         void getAllBooks_shouldReturnOk() throws Exception {
             mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/books"))
@@ -61,6 +61,7 @@ class ControllerTest {
                     .andExpect(MockMvcResultMatchers.status().isForbidden());
         }
 
+        // Author--------------------
         @Test
         void getAllAuthors_shouldReturnOk() throws Exception {
             mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/authors"))
@@ -90,6 +91,7 @@ class ControllerTest {
                     .andExpect(MockMvcResultMatchers.status().isForbidden());
         }
 
+        // Loan------------------------------
         @Test
         void getAllLoans_shouldReturnNotFound() throws Exception {
             mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/loans"))
@@ -109,9 +111,27 @@ class ControllerTest {
         }
 
         @Test
-        void updateLoanById_shouldReturnNotFound_whenLoanDoesNotExist() throws Exception {
+        void updateLoanById_shouldReturnForbidden_whenUpdatingLoanAsUser() throws Exception {
             mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/loans/1"))
-                    .andExpect(MockMvcResultMatchers.status().isNotFound());
+                    .andExpect(MockMvcResultMatchers.status().isForbidden());
+        }
+    }
+
+    @Nested
+    @WithMockUser(roles = "ADMIN")
+    class AuthenticatedAdminTests {
+
+        @Test
+        void deleteBookById_shouldReturnSuccessful_whenDeletingBookAsAdmin() throws Exception {
+            mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/books/1"))
+                    .andExpect(MockMvcResultMatchers.status().is2xxSuccessful());
+        }
+
+
+        @Test
+        void deleteLoanById_shouldReturnSuccessful_whenDeletingLoanAsAdmin() throws Exception {
+            mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/loans/1"))
+                    .andExpect(MockMvcResultMatchers.status().is2xxSuccessful());
         }
 
     }

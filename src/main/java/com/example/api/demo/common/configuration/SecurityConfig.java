@@ -28,13 +28,13 @@ public class SecurityConfig {
                         .requestMatchers("/login").permitAll()
                         .requestMatchers(HttpMethod.GET, "/**").hasRole("USER")
                         .requestMatchers(HttpMethod.POST, "/**").hasRole("USER")
-                        .requestMatchers(HttpMethod.PUT, "/api/v1/loans/**").hasRole("USER"))
+                        .requestMatchers("/**").hasRole("ADMIN")
+                        .anyRequest().authenticated())
                 .httpBasic(Customizer.withDefaults())
                 .formLogin(Customizer.withDefaults());
 
         return http.build();
     }
-    
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -52,6 +52,16 @@ public class SecurityConfig {
         return new InMemoryUserDetailsManager(userDetails);
     }
 
+    @Bean
+    public UserDetailsService adminDetailsService(PasswordEncoder passwordEncoder) {
+        UserDetails userDetails = User.builder()
+                .username("admin")
+                .password(passwordEncoder.encode("adminpasta"))
+                .roles("ADMIN")
+                .build();
+
+        return new InMemoryUserDetailsManager(userDetails);
+    }
 
     @Bean
     UrlBasedCorsConfigurationSource corsConfigurationSource() {

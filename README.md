@@ -12,7 +12,7 @@ The DataLoader.java file seeds the project with books, puts user credentials in 
 
 # Security
 
-When logged in you have the role:"USER" who can use GET and POST endpoints. DELETE and UPDATE are forbidden for this role. Except for loans PUT to return loaned book.
+When logged in you have the role:"USER" who can use all endpoints.
 CSRF is deactivated in SecurityConfig.java for curl requests to work while trying the API.
 
 # Fort manually trying the endpoints in browser
