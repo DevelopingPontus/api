@@ -1,106 +1,112 @@
-# This project is for learning. These steps are for setting up the project.
+## Overview
 
-1. Install Redis
-2. Open a new terminal and instantiate a Redis server: $redis-server
-3. Install Vault
-4. Open a new terminal and instantiate a Vault server: $vault server -dev -dev-root-token-id="your-dev-token"
-5. Open a new terminal at root of the project. Set environment variable and run: $VAULT_TOKEN=your-dev-token mvn spring-boot:run
+This is a learning project. Follow the steps below to set up your development environment.
 
-# Populating the project with test data
+---
 
-The DataLoader.java file seeds the project with books, puts user credentials in Vault and then reads from the vault to create a user that can loggin.
+## Initial Setup
 
-# Security
+### 1. Start Redis and Vault
 
-When logged in you have the role:"USER" who can use all endpoints.
-CSRF is deactivated in SecurityConfig.java for curl requests to work while trying the API.
+Set up the required infrastructure services by running these commands in separate terminals:
 
-# Fort manually trying the endpoints in browser
+**Terminal 1 – Redis:**
+```bash
+redis-server
+```
 
+**Terminal 2 – Vault:**
+```bash
+vault server -dev -dev-root-token-id="your-dev-token"
+```
+
+### 2. Start the Application
+
+**Terminal 3 – At project root:**
+```bash
+VAULT_TOKEN=your-dev-token mvn spring-boot:run
+```
+
+---
+
+## Data Population
+
+The **DataLoader.java** file automatically seeds the project with test data on startup. It handles:
+- Creating sample books
+- Storing user credentials in Vault
+- Creating a login-enabled user account
+
+---
+
+## Testing the API
+
+### Access Swagger UI
+```
 http://localhost:8080/swagger-ui.html
-To login, use the following credentials:
-user: user
-password: pastaword
+```
 
-Book v2 has a pageable GET endpoint API.
+### Login Credentials
+- **Username:** user
+- **Password:** pastaword
 
-Benchmarks:
-When redis is used for cache, the performance is not as good as with in-memory. No notable difference in performance when using H2.
+### Key Features
+- **User Role:** All authenticated users have the `USER` role and can access all endpoints
+- **Pagination:** The v2 Books endpoint supports pageable GET requests
+- **CSRF:** Disabled in SecurityConfig.java to allow curl requests during testing
 
-Tests were done with: $ab -n 1000000 -c 100 http://localhost:8080/api/v1/books
+---
 
---- with no cache:
-Server Software:  
-Server Hostname: localhost
-Server Port: 8080
+## Performance Benchmarks
 
-Document Path: /api/v1/books
-Document Length: 0 bytes
+Benchmarks were conducted using **Apache Bench** with the following command:
+```bash
+ab -n 1000000 -c 100 http://localhost:8080/api/v1/books
+```
 
-Concurrency Level: 100
-Time taken for tests: 34.922 seconds
-Complete requests: 1000000
+| Metric | No Cache | Redis Cache |
+|--------|----------|-------------|
+| **Requests/sec** | 28,634.98 | 25,469.64 |
+| **Mean response time** | 3.492 ms | 3.926 ms |
+| **Total time** | 34.922 s | 39.262 s |
+| **95th percentile** | 5 ms | 6 ms |
+| **99th percentile** | 14 ms | 14 ms |
+
+### Key Findings
+
+**No caching performs better than Redis caching** for this workload. In-memory caching showed no notable performance difference compared to H2 database caching. Redis introduces network overhead that outweighs the caching benefits in this scenario.
+
+---
+
+## Detailed Benchmark Results
+
+### No Cache Configuration
+
+```
+Concurrency: 100
+Complete requests: 1,000,000
 Failed requests: 0
-Non-2xx responses: 1000000
-Total transferred: 465000000 bytes
-HTML transferred: 0 bytes
-Requests per second: 28634.98 [#/sec] (mean)
-Time per request: 3.492 [ms] (mean)
-Time per request: 0.035 [ms] (mean, across all concurrent requests)
-Transfer rate: 13003.19 [Kbytes/sec] received
+Time taken: 34.922 seconds
+Requests per second: 28,634.98
 
-Connection Times (ms)
-min mean[+/-sd] median max
-Connect: 0 1 2.6 1 111
-Processing: 0 2 6.7 1 330
-Waiting: 0 2 3.5 1 111
-Total: 0 3 7.2 3 334
+Response time distribution (ms):
+  50%: 3 ms
+  95%: 5 ms
+  99%: 14 ms
+  Max: 334 ms
+```
 
-Percentage of the requests served within a certain time (ms)
-50% 3
-66% 3
-75% 3
-80% 3
-90% 4
-95% 5
-98% 8
-99% 14
-100% 334 (longest request)
+### Redis Cache Configuration
 
---- with redis cache:
-Server Software:  
-Server Hostname: localhost
-Server Port: 8080
-
-Document Path: /api/v1/books
-Document Length: 0 bytes
-
-Concurrency Level: 100
-Time taken for tests: 39.262 seconds
-Complete requests: 1000000
+```
+Concurrency: 100
+Complete requests: 1,000,000
 Failed requests: 0
-Non-2xx responses: 1000000
-Total transferred: 465000000 bytes
-HTML transferred: 0 bytes
-Requests per second: 25469.64 [#/sec] (mean)
-Time per request: 3.926 [ms] (mean)
-Time per request: 0.039 [ms] (mean, across all concurrent requests)
-Transfer rate: 11565.80 [Kbytes/sec] received
+Time taken: 39.262 seconds
+Requests per second: 25,469.64
 
-Connection Times (ms)
-min mean[+/-sd] median max
-Connect: 0 1 1.8 1 128
-Processing: 0 3 6.0 2 376
-Waiting: 0 3 3.9 2 149
-Total: 0 4 6.2 3 377
-
-Percentage of the requests served within a certain time (ms)
-50% 3
-66% 4
-75% 4
-80% 4
-90% 5
-95% 6
-98% 10
-99% 14
-100% 377 (longest request)
+Response time distribution (ms):
+  50%: 3 ms
+  95%: 6 ms
+  99%: 14 ms
+  Max: 377 ms
+```
